@@ -10,11 +10,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -25,11 +28,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.R.attr.padding;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_ACCESS_FINE_LOCATION = 10001;
     private GoogleMap mMap;
     private List<Address> addressList = new ArrayList<>();
+    private List<Marker> markerList = new ArrayList<>();
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
@@ -43,6 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (addressList.size() >= 2) {
                 mMap.clear();
                 addressList.clear();
+                markerList.clear();
             }
             try {
                 addressList.add(geocoder.getFromLocationName(location, 1).get(0));
@@ -52,8 +59,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Address address = addressList.get(addressList.size()-1);
             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
 
-            mMap.addMarker(new MarkerOptions().position(latLng));
+            markerList.add(mMap.addMarker(new MarkerOptions().position(latLng)));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+
+            if (addressList.size()>1) {
+
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markerList) {
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+//            Then obtain a movement description object by using the factory: CameraUpdateFactory:
+
+                int padding = 100; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+//            Or if you want an animation:
+
+                mMap.animateCamera(cu);
+            }else
+            {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+
+            }
+
+
 
         }
     }
