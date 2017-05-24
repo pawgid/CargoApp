@@ -1,4 +1,4 @@
-package com.cargocrew.cargoapp.json;
+package com.cargocrew.cargoapp.forDrawingRoute;
 
 import com.google.android.gms.maps.model.LatLng;
 
