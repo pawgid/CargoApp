@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,6 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final int REQUEST_ACCESS_FINE_LOCATION = 10001;
     private GoogleMap mMap;
+    private List<Address> addressList = new ArrayList<>();
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
@@ -36,15 +38,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void search() {
         String location = searchEditText.getText().toString();
         if (location != null && !location.equals("")) {
-            List<Address> addressList = null;
+
             Geocoder geocoder = new Geocoder(this);
+            if (addressList.size() >= 2) {
+                mMap.clear();
+                addressList.clear();
+            }
             try {
-                addressList = geocoder.getFromLocationName(location, 1);
+                addressList.add(geocoder.getFromLocationName(location, 1).get(0));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+            Address address = addressList.get(addressList.size()-1);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
 
             mMap.addMarker(new MarkerOptions().position(latLng));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
