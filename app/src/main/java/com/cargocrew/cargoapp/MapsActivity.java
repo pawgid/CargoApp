@@ -94,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Start downloading json data from Google Directions API
                 downloadTask.execute(url);
             }
-            searchEditText.setText("");
+            searchEditText.setText(""); 
         }
     }
 
