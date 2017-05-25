@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
 import com.cargocrew.cargoapp.forDrawingRoute.Services;
+import com.cargocrew.cargoapp.models.CargoItem;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
 
 import static com.cargocrew.cargoapp.R.id.map;
 
@@ -39,6 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static GoogleMap mMap;
     private List<Address> addressList = new ArrayList<>();
     private List<Marker> markerList = new ArrayList<>();
+
+    private Realm realm = Realm.getDefaultInstance();
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
@@ -50,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             Geocoder geocoder = new Geocoder(this);
             if (addressList.size() >= 2) {
-                mMap.clear();
+//                mMap.clear();
                 addressList.clear();
                 markerList.clear();
             }
@@ -94,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Start downloading json data from Google Directions API
                 downloadTask.execute(url);
             }
-            searchEditText.setText(""); 
+            searchEditText.setText("");
         }
     }
 
@@ -156,10 +160,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
-                mMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+//                mMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                realmTestTransation();
             }
         });
     }
 
+    private void realmTestTransation() {
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.where(CargoItem.class).findAll().deleteAllFromRealm();
+
+                for (int x = 0; x < 10; ++x) {
+                    CargoItem cargoItem = realm.createObject(CargoItem.class);
+                    cargoItem.setA(1);
+                }
+            }
+        });
+    }
 
 }
