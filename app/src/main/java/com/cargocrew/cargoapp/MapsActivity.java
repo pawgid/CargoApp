@@ -24,6 +24,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +48,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<Address> addressList = new ArrayList<>();
     private List<Marker> markerList = new ArrayList<>();
 
-    private Realm realm = Realm.getDefaultInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
+
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
@@ -113,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (!haveLocationPermission()) return;
 
         setUpMap();
-
+        dataBaseSetup();
     }
 
     private boolean haveLocationPermission() {
@@ -162,23 +169,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng point) {
                 mMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                realmTestTransaction();
-                Toast.makeText(MapsActivity.this,"Marked    ",Toast.LENGTH_SHORT).show();
+                addToFireBase();
+//                Toast.makeText(MapsActivity.this,"Marked",Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void realmTestTransaction() {
+    public void dataBaseSetup () {
 
-        realm.executeTransaction(new Realm.Transaction() {
+        cargoRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void execute(Realm realm) {
-                CargoItem cargoItem = realm.createObject(CargoItem.class);
-                cargoItem.setName("Testing");
-                cargoItem.setValue(1);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Toast.makeText(MapsActivity.this,"onChildAdded",Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Toast.makeText(MapsActivity.this,"onChildChanged",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Toast.makeText(MapsActivity.this,"onChildRemoved",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                Toast.makeText(MapsActivity.this,"onChildMoved",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(MapsActivity.this,"onCancelled",Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
+
+
+
+    }
+
+    public void addToFireBase (){
+
+        String key = cargoRef.push().getKey();
+        cargoRef.child("asd").child(key).setValue(new CargoItem("Banany", 1));
+
     }
 
 }
