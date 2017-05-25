@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
 import com.cargocrew.cargoapp.forDrawingRoute.Services;
@@ -160,25 +161,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
-//                mMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                realmTestTransation();
+                mMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                realmTestTransaction();
+                Toast.makeText(MapsActivity.this,"Marked",Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void realmTestTransation() {
+    private void realmTestTransaction() {
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.where(CargoItem.class).findAll().deleteAllFromRealm();
+                CargoItem cargoItem = realm.createObject(CargoItem.class);
+                cargoItem.setName("Testing");
+                cargoItem.setValue(1);
 
-                for (int x = 0; x < 10; ++x) {
-                    CargoItem cargoItem = realm.createObject(CargoItem.class);
-                    cargoItem.setA(1);
-                }
             }
         });
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
