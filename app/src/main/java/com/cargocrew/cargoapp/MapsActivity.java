@@ -163,7 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng point) {
                 mMap.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                 realmTestTransaction();
-                Toast.makeText(MapsActivity.this,"Marked",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this,"Marked    ",Toast.LENGTH_SHORT).show();
             }
         });
     }
