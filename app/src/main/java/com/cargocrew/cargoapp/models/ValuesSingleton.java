@@ -3,6 +3,9 @@ package com.cargocrew.cargoapp.models;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Miki on 25.05.2017.
  */
@@ -18,7 +21,17 @@ public class ValuesSingleton {
     private ValuesSingleton() {
     }
 
-    CargoItem cargoItem = null;
+    Polyline polyline = null;
+
+    public Polyline getPolyline() {
+        return polyline;
+    }
+
+    public void setPolyline(Polyline polyline) {
+        this.polyline = polyline;
+    }
+
+    CargoItem cargoItem = new CargoItem();
 
     public CargoItem getCargoItem() {
         return cargoItem;
@@ -40,16 +53,19 @@ public class ValuesSingleton {
 
     public void setCargoItemDestination(LatLng destination)
     {
-        getCargoItem().setDestination(destination);
+        getCargoItem().setDestination(new Point(destination));
     }
 
     public void setCargoItemOrigin(LatLng origin)
     {
-        getCargoItem().setOrigin(origin);
+        getCargoItem().setOrigin(new Point(origin));
     }
 
-    public void setCargoItemRoute(Polyline route)
+
+    public void cleanCargoItem ()
     {
-        getCargoItem().setRoute(route);
+        cargoItem = new CargoItem();
     }
+
+
 }

@@ -5,12 +5,12 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,12 +53,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
     ValuesSingleton VS = ValuesSingleton.getInstance();
 
+    HashMap<String, CargoItem> cargoItemMap = new HashMap<String, CargoItem>();
+    List<CargoItem> cargoItemList = new ArrayList();
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
-
-
-
 
 
     @Override
@@ -123,10 +123,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onMapClick(LatLng point) {
-                getRoute(point,false);
+            public void onMapClick(com.google.android.gms.maps.model.LatLng latLng) {
+                getRoute(latLng);
             }
         });
+
     }
 
     @OnClick(R.id.searchButton)
@@ -134,11 +135,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String location = searchEditText.getText().toString();
         if (location != null && !location.equals("")) {
             LatLng coordinationAsLatLng = getCoordinationFromName(location);
-            getRoute(coordinationAsLatLng,true);
+            getRoute(coordinationAsLatLng);
         }
     }
-
-
 
 
     public void dataBaseSetup() {
@@ -147,11 +146,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    CargoItem value = data.getValue(CargoItem.class);
+                    cargoItemList.add(value);
+                }
+
+                mMap.clear();
+
+                Services services = new Services();
+
+                for (CargoItem cargoItem: cargoItemList){
+//                CargoItem cargoItem = cargoItemList.get(0);
+
+                currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
+                currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
+
+                String url = services.getDirectionsUrl(cargoItem.getOrigin().toLatLong(), cargoItem.getDestination().toLatLong());
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute(url);
+                }
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    CargoItem value = data.getValue(CargoItem.class);
+                    cargoItemList.add(value);
+                }
+
+                mMap.clear();
+
+                Services services = new Services();
+
+                for (CargoItem cargoItem: cargoItemList){
+//                CargoItem cargoItem = cargoItemList.get(0);
+
+                    currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
+                    currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
+
+                    String url = services.getDirectionsUrl(cargoItem.getOrigin().toLatLong(), cargoItem.getDestination().toLatLong());
+                    DownloadTask downloadTask = new DownloadTask();
+                    downloadTask.execute(url);
+                }
             }
 
             @Override
@@ -176,7 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void addToFireBase() {
 
         String key = cargoRef.push().getKey();
-        cargoRef.child("asd").child(key).setValue(new CargoItem("Banany", 1));
+        cargoRef.child("Bananowy Magazyn").child(key).setValue(new CargoItem("Banany", 1));
 
     }
 
@@ -192,10 +232,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return latLng;
     }
 
-    private void getRoute(LatLng coordination,boolean zoomFlag) {
+    private void getRoute(LatLng coordination) {
 
 
         if (currentRouteMarkerList.size() == 0) {
+
+//            mMap.clear();
 
             currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
             searchEditText.setText("");
@@ -215,7 +257,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             DownloadTask downloadTask = new DownloadTask();
             downloadTask.execute(url);
 
-            if (zoomFlag)
             settingZoom(currentRouteMarkerList);
 
             currentRouteMarkerList.clear();
@@ -238,8 +279,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             mMap.animateCamera(cu);
         } else {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerList.get(0).getPosition(), 8));
+            LatLngBounds bounds = this.mMap.getProjection().getVisibleRegion().latLngBounds;
+            if (!bounds.contains(markerList.get(0).getPosition())) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markerList.get(0).getPosition(), 8));
+            }
         }
+    }
+
+    @BindView(R.id.nameEditText)
+    TextView nameEditText;
+
+
+    @OnClick(R.id.sendButton)
+    public void sendButtonClick() {
+        VS.setCargoItemName(nameEditText.getText().toString());
+
+        String key = cargoRef.push().getKey();
+        cargoRef.child("Storage").child(key).setValue(VS.getCargoItem());
+        mMap.clear();
+
+    }
+
+    @OnClick(R.id.cancelButton)
+    public void cancelButtonClick() {
+        VS.cleanCargoItem();
+        mMap.clear();
+
     }
 
 
