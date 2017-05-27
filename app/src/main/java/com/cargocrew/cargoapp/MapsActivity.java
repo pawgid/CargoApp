@@ -147,6 +147,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
+                cargoItemList.clear();
+
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     CargoItem value = data.getValue(CargoItem.class);
                     cargoItemList.add(value);
@@ -157,7 +159,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Services services = new Services();
 
                 for (CargoItem cargoItem: cargoItemList){
-//                CargoItem cargoItem = cargoItemList.get(0);
 
                 currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
                 currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
@@ -173,6 +174,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
 
+                cargoItemList.clear();
+
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     CargoItem value = data.getValue(CargoItem.class);
                     cargoItemList.add(value);
@@ -183,7 +186,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Services services = new Services();
 
                 for (CargoItem cargoItem: cargoItemList){
-//                CargoItem cargoItem = cargoItemList.get(0);
 
                     currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
                     currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));

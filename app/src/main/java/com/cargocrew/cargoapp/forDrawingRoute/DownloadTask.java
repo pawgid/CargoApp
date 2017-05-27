@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.cargocrew.cargoapp.MapsActivity;
+import com.cargocrew.cargoapp.R;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -149,7 +150,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(10);
-                lineOptions.color(Color.RED);
+                lineOptions.color(Color.BLUE);
             }
 
             // Drawing polyline in the Google Map for the i-th route
