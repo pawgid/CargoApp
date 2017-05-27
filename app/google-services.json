@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "5732563163",
+    "firebase_url": "https://cargocrew-2efd6.firebaseio.com",
+    "project_id": "cargocrew-2efd6",
+    "storage_bucket": "cargocrew-2efd6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5732563163:android:91c2ff97d7f9bcc7",
+        "android_client_info": {
+          "package_name": "com.cargocrew.cargoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5732563163-b031i4m6bup5c1rs9kini1925hau3mtl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cargocrew.cargoapp",
+            "certificate_hash": "cf11c262af1b61d2df06d15f63ab9e600ee30eaa"
+          }
+        },
+        {
+          "client_id": "5732563163-ugaolrhtd5rn0r5kimeo5ipucntoac0d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvC-8JEheUjyNchrxEfh85ObWFi6A2BII"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5732563163-ugaolrhtd5rn0r5kimeo5ipucntoac0d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
