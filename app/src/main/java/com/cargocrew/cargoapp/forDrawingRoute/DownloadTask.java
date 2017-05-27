@@ -156,7 +156,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
             Polyline polyline = mMap.addPolyline(lineOptions);
 
             ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
-            valuesSingleton.setPolyline(polyline);
+            valuesSingleton.setCargoItemRoute(polyline);
 
 
         }
