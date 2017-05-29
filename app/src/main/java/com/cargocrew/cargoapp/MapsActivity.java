@@ -6,10 +6,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,12 +62,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.searchEditText)
     EditText searchEditText;
 
+    @BindView(R.id.floatingActionButtonSearch)
+    FloatingActionButton floatingActionButtonSearch;
+
+    @BindView(R.id.floatingActionButtonOpenSearch)
+    FloatingActionButton floatingActionButtonOpenSearch;
+
+    @BindView(R.id.floatingActionButtonSwitch)
+    FloatingActionButton floatingActionButtonSwitch;
+
+    @BindView(R.id.bottomBar)
+    LinearLayout bottomBar;
+
+    @OnClick(R.id.floatingActionButtonOpenSearch)
+    public void floatingActionButtonOpenSearchClick(){
+        floatingActionButtonOpenSearch.setVisibility(View.GONE);
+        floatingActionButtonSearch.setVisibility(View.VISIBLE);
+        searchEditText.setVisibility(View.VISIBLE);
+        bottomBar.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.floatingActionButtonSwitch)
+    public void floatingActionButtonSwitchClick(){
+
+
+
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
+
 
         if (!haveLocationPermission()) return;
 
@@ -130,7 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    @OnClick(R.id.searchButton)
+    @OnClick(R.id.floatingActionButtonSearch)
     public void search() {
         String location = searchEditText.getText().toString();
         if (location != null && !location.equals("")) {
@@ -158,14 +190,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Services services = new Services();
 
-                for (CargoItem cargoItem: cargoItemList){
+                for (CargoItem cargoItem : cargoItemList) {
 
-                currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
-                currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
+                    currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
+                    currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
 
-                String url = services.getDirectionsUrl(cargoItem.getOrigin().toLatLong(), cargoItem.getDestination().toLatLong());
-                DownloadTask downloadTask = new DownloadTask();
-                downloadTask.execute(url);
+                    String url = services.getDirectionsUrl(cargoItem.getOrigin().toLatLong(), cargoItem.getDestination().toLatLong());
+                    DownloadTask downloadTask = new DownloadTask();
+                    downloadTask.execute(url);
                 }
 
             }
@@ -185,7 +217,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Services services = new Services();
 
-                for (CargoItem cargoItem: cargoItemList){
+                for (CargoItem cargoItem : cargoItemList) {
 
                     currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
                     currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
@@ -244,6 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
             searchEditText.setText("");
             VS.setCargoItemOrigin(currentRouteMarkerList.get(0).getPosition());
+            settingZoom(currentRouteMarkerList);
 
         } else if (currentRouteMarkerList.size() == 1) {
 
@@ -306,6 +339,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void cancelButtonClick() {
         VS.cleanCargoItem();
         mMap.clear();
+        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
+        floatingActionButtonSearch.setVisibility(View.GONE);
+        searchEditText.setVisibility(View.GONE);
+        bottomBar.setVisibility(View.GONE);
 
     }
 
