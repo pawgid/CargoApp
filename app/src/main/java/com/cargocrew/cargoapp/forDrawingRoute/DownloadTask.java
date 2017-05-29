@@ -1,8 +1,11 @@
 package com.cargocrew.cargoapp.forDrawingRoute;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.cargocrew.cargoapp.MapsActivity;
 import com.cargocrew.cargoapp.R;
@@ -23,6 +26,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.cargocrew.cargoapp.MapsActivity.mMap;
 
@@ -158,6 +164,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
             ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
             valuesSingleton.setPolyline(polyline);
+            valuesSingleton.setSearchClickable(true);
 
 
         }

@@ -12,6 +12,7 @@ import java.util.List;
 
 public class ValuesSingleton {
 
+
     private static final ValuesSingleton ourInstance = new ValuesSingleton();
 
     public static ValuesSingleton getInstance() {
@@ -21,7 +22,9 @@ public class ValuesSingleton {
     private ValuesSingleton() {
     }
 
-    Polyline polyline = null;
+    private boolean searchClickable = false;
+
+    private Polyline polyline = null;
 
     public Polyline getPolyline() {
         return polyline;
@@ -67,5 +70,11 @@ public class ValuesSingleton {
         cargoItem = new CargoItem();
     }
 
+    public boolean isSearchClickable() {
+        return searchClickable;
+    }
 
+    public void setSearchClickable(boolean searchClickable) {
+        this.searchClickable = searchClickable;
+    }
 }
