@@ -2,46 +2,32 @@ package com.cargocrew.cargoapp.models;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by Miki on 29.05.2017.
  */
 
 public abstract class TransportationItem implements Serializable {
 
+    @Setter
+    @Getter
     private String name;
+    @Setter
+    @Getter
     private int value;
+    @Setter
+    @Getter
     private Point origin;
+    @Setter
+    @Getter
     private Point destination;
+    @Setter
+    @Getter
+    private String key;
+    @Setter
+    @Getter
+    private String owner;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public Point getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(Point origin) {
-        this.origin = origin;
-    }
-
-    public Point getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Point destination) {
-        this.destination = destination;
-    }
 }

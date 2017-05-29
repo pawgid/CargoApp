@@ -21,7 +21,6 @@ import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
 import com.cargocrew.cargoapp.forDrawingRoute.Services;
 import com.cargocrew.cargoapp.models.CargoItem;
 import com.cargocrew.cargoapp.models.TransportationItem;
-import com.cargocrew.cargoapp.models.TruckItem;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,7 +39,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -163,6 +161,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getRoute(latLng);
             }
         });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+            @Override
+            public boolean onMarkerClick(Marker arg0) {
+                    Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+                TransportationItem tag = (TransportationItem) arg0.getTag();
+
+                
+
+                final LatLng origin = tag.getOrigin().toLatLong();
+                final LatLng dest = tag.getDestination().toLatLong();
+                Services s = new Services();
+                String url = s.getDirectionsUrl(origin, dest);
+                DownloadTask downloadTask = new DownloadTask();
+                downloadTask.execute(url);
+
+
+
+
+                return true;
+            }
+        });
+
 
     }
 
@@ -185,27 +206,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
-                cargoItemList.clear();
-
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    CargoItem value = data.getValue(CargoItem.class);
-                    cargoItemList.add(value);
-                }
-
+                saveDataFromSnapshot(dataSnapshot, cargoItemList);
                 mMap.clear();
                 drawTransportationMarkers(cargoItemList);
-
-//                Services services = new Services();
-//
-//                for (TransportationItem cargoItem : cargoItemList) {
-//
-//                    currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getOrigin().toLatLong())));
-//                    currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(cargoItem.getDestination().toLatLong())));
-//
-//                    String url = services.getDirectionsUrl(cargoItem.getOrigin().toLatLong(), cargoItem.getDestination().toLatLong());
-//                    DownloadTask downloadTask = new DownloadTask();
-//                    downloadTask.execute(url);
-//                }
 
             }
 
@@ -213,16 +216,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
 
-                cargoItemList.clear();
-
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    CargoItem value = data.getValue(CargoItem.class);
-                    cargoItemList.add(value);
-                }
-
+                saveDataFromSnapshot(dataSnapshot, cargoItemList);
                 mMap.clear();
                 drawTransportationMarkers(cargoItemList);
-
 
             }
 
@@ -243,6 +239,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
+    }
+
+    private void saveDataFromSnapshot(DataSnapshot dataSnapshot, List<TransportationItem> transportationItemsList) {
+        transportationItemsList.clear();
+        for (DataSnapshot data : dataSnapshot.getChildren()) {
+            String key = data.getKey();
+            CargoItem value = data.getValue(CargoItem.class);
+            value.setKey(key);
+            transportationItemsList.add(value);
+        }
     }
 
     private LatLng getCoordinationFromName(String location) {
@@ -339,27 +345,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
-
-    public void drawTransportationMarkers(List<TransportationItem> transportationItemsList )
-    {
+    public void drawTransportationMarkers(List<TransportationItem> transportationItemsList) {
         for (TransportationItem transportationItem : transportationItemsList) {
-            mMap.addMarker(new MarkerOptions().position(transportationItem.getOrigin().toLatLong()));
+            Marker marker = mMap.addMarker(new MarkerOptions().position(transportationItem.getOrigin().toLatLong()));
+            marker.setTitle(transportationItem.getName());
+            marker.setTag(transportationItem);
         }
     }
 
-
-
-    public void showSearchEventItems()
-    {
+    public void showSearchEventItems() {
         floatingActionButtonOpenSearch.setVisibility(View.GONE);
         floatingActionButtonSearch.setVisibility(View.VISIBLE);
         searchEditText.setVisibility(View.VISIBLE);
         bottomBar.setVisibility(View.VISIBLE);
     }
 
-
-    public void hideSearchEventItems(){
+    public void hideSearchEventItems() {
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
         floatingActionButtonSearch.setVisibility(View.GONE);
         searchEditText.setVisibility(View.GONE);
