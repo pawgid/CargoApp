@@ -93,9 +93,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.floatingActionButtonSwitch)
     public void floatingActionButtonSwitchClick() {
-        if(currentSelect == cargoHashMap){
+        if (currentSelect == cargoHashMap) {
             currentSelect = truckHashMap;
-        }else {
+        } else {
             currentSelect = cargoHashMap;
         }
 
@@ -185,7 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 TransportationItem tag = (TransportationItem) arg0.getTag();
 
 
-
                 LatLng origin = tag.getOrigin().toLatLong();
                 LatLng dest = tag.getDestination().toLatLong();
                 Services s = new Services();
@@ -250,9 +249,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
                 saveDataFromSnapshot(dataSnapshot, cargoHashMap);
-                mMap.clear();
-                drawTransportationMarkers(currentSelect);
 
+                if (currentSelect == cargoHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
+                }
             }
 
             @Override
@@ -260,9 +261,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
 
                 saveDataFromSnapshot(dataSnapshot, cargoHashMap);
-                mMap.clear();
-                drawTransportationMarkers(currentSelect);
 
+                if (currentSelect == cargoHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
+                }
             }
 
             @Override
@@ -281,6 +284,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
+        truckRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
+
+                saveDataFromSnapshot(dataSnapshot, truckHashMap);
+                if (currentSelect == truckHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
+
+                saveDataFromSnapshot(dataSnapshot, truckHashMap);
+                if (currentSelect == truckHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
+                }
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Toast.makeText(MapsActivity.this, "onChildRemoved", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                Toast.makeText(MapsActivity.this, "onChildMoved", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(MapsActivity.this, "onCancelled", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
