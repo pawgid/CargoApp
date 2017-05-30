@@ -160,11 +160,17 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
             }
 
             // Drawing polyline in the Google Map for the i-th route
-            Polyline polyline = mMap.addPolyline(lineOptions);
+            try {
+                Polyline polyline = mMap.addPolyline(lineOptions);
+                ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
+                valuesSingleton.setPolyline(polyline);
+                valuesSingleton.setSearchClickable(true);
 
-            ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
-            valuesSingleton.setPolyline(polyline);
-            valuesSingleton.setSearchClickable(true);
+            }catch (NullPointerException e)
+            {
+                e.printStackTrace();
+            }
+
 
 
         }

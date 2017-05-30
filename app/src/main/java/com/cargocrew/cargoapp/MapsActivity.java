@@ -21,6 +21,7 @@ import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
 import com.cargocrew.cargoapp.forDrawingRoute.Services;
 import com.cargocrew.cargoapp.models.CargoItem;
 import com.cargocrew.cargoapp.models.TransportationItem;
+import com.cargocrew.cargoapp.models.TruckItem;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
@@ -59,11 +61,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
     private DatabaseReference truckRef = database.getInstance().getReference("Truck");
-//    private List<TransportationItem> cargoItemList = new ArrayList();
+
+    private HashMap<String,Marker> cargoMarkerHashMap = new HashMap<>();
+    private HashMap<String,Marker> truckMarkerHashMap = new HashMap<>();
+    private HashMap<String,Marker> currentMarkerHashMap = new HashMap<>();
 
     private HashMap<String, TransportationItem> cargoHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
-
     private HashMap<String, TransportationItem> currentSelect = new HashMap<>();
 
 
@@ -84,11 +88,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.bottomBar)
     LinearLayout bottomBar;
 
+    @BindView(R.id.nameEditText)
+    TextView nameEditText;
+
+    @BindView(R.id.sendButton)
+    Button sendButton;
+
     @OnClick(R.id.floatingActionButtonOpenSearch)
     public void floatingActionButtonOpenSearchClick() {
         mMap.clear();
         showSearchEventItems();
-
     }
 
     @OnClick(R.id.floatingActionButtonSwitch)
@@ -99,10 +108,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currentSelect = cargoHashMap;
         }
 
+
         mMap.clear();
         drawTransportationMarkers(currentSelect);
     }
 
+    @OnClick(R.id.sendButton)
+    public void sendButtonClick() {
+        VS.setCargoItemName(nameEditText.getText().toString());
+
+        String key = cargoRef.push().getKey();
+        if (currentSelect == cargoHashMap) {
+            cargoRef.child("Storage").child(key).setValue(VS.getCargoItem());
+        } else {
+            truckRef.child(key).setValue(VS.getCargoItem());
+        }
+        mMap.clear();
+        hideSearchEventItems();
+
+        drawTransportationMarkers(currentSelect);
+    }
+
+    @OnClick(R.id.cancelButton)
+    public void cancelButtonClick() {
+        VS.cleanCargoItem();
+        currentRouteMarkerList.clear();
+        mMap.clear();
+        hideSearchEventItems();
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
+        drawTransportationMarkers(currentSelect);
+    }
+
+    @OnClick(R.id.floatingActionButtonSearch)
+    public void search() {
+        if (VS.isSearchClickable()) {
+            String location = searchEditText.getText().toString();
+            if (location != null && !location.equals("")) {
+                LatLng coordinationAsLatLng = getCoordinationFromName(location);
+                getRoute(coordinationAsLatLng);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,15 +162,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setUpMap();
         dataBaseSetup();
-    }
-
-    private boolean haveLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -141,17 +178,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private boolean haveLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
+            return false;
+        }
+        return true;
+    }
+
     private void setUpMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(map);
-
         mapFragment.getMapAsync(this);
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -162,6 +201,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng polandCenter = new LatLng(52.069381, 19.480334);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(polandCenter));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(5.4f));
+
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map));
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -198,7 +239,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final Marker destMarker = mMap.addMarker(new MarkerOptions().position(dest).title("Dest"));
                 downloadTask.execute(url);
 
-                ArrayList<Marker> markers = new ArrayList<Marker>();
+                ArrayList<Marker> markers = new ArrayList<>();
                 markers.add(startMarker);
                 markers.add(destMarker);
 
@@ -228,18 +269,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
-
-    @OnClick(R.id.floatingActionButtonSearch)
-    public void search() {
-        if (VS.isSearchClickable()) {
-            String location = searchEditText.getText().toString();
-            if (location != null && !location.equals("")) {
-                LatLng coordinationAsLatLng = getCoordinationFromName(location);
-                getRoute(coordinationAsLatLng);
-            }
-        }
-    }
-
 
     public void dataBaseSetup() {
 
@@ -285,34 +314,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
+
         truckRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
-                saveDataFromSnapshot(dataSnapshot, truckHashMap);
-                if (currentSelect == truckHashMap) {
-                    mMap.clear();
-                    drawTransportationMarkers(currentSelect);
-                }
+                String key = dataSnapshot.getKey();
+                TruckItem truckItem = dataSnapshot.getValue(TruckItem.class);
+
+                truckHashMap.put(key,truckItem);
+
+                Boolean visibility = (currentSelect==truckHashMap);
+                Marker marker = mMap.addMarker(new MarkerOptions().position(truckItem.getOrigin().toLatLong()).visible(visibility));
+                truckMarkerHashMap.put(key,marker);
 
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
-
-                saveDataFromSnapshot(dataSnapshot, truckHashMap);
-                if (currentSelect == truckHashMap) {
-                    mMap.clear();
-                    drawTransportationMarkers(currentSelect);
-                }
-
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Toast.makeText(MapsActivity.this, "onChildRemoved", Toast.LENGTH_SHORT).show();
+
+                String key = dataSnapshot.getKey();
+                if(truckHashMap.containsKey(key)){
+                    truckMarkerHashMap.remove(key);}
+                if(truckMarkerHashMap.containsKey(key)){
+                    Marker marker = truckMarkerHashMap.get(key);
+                    marker.remove();}
+
+
             }
 
             @Override
@@ -369,16 +404,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             try {
                 address = geocoder.getFromLocation(currentRouteMarkerList.get(0).getPosition().latitude, currentRouteMarkerList.get(0).getPosition().longitude, 1).get(0);
                 Toast.makeText(this, address.getPostalCode().toString(), Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
 
+
         } else if (currentRouteMarkerList.size() == 1) {
+
+
 
             currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
             searchEditText.setText("");
             VS.setCargoItemDestination(currentRouteMarkerList.get(1).getPosition());
+
 
 
             LatLng origin = currentRouteMarkerList.get(0).getPosition();
@@ -416,34 +455,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
-    @BindView(R.id.nameEditText)
-    TextView nameEditText;
-
-
-    @BindView(R.id.sendButton)
-    Button sendButton;
-
-    @OnClick(R.id.sendButton)
-    public void sendButtonClick() {
-        VS.setCargoItemName(nameEditText.getText().toString());
-
-        String key = cargoRef.push().getKey();
-        cargoRef.child("Storage").child(key).setValue(VS.getCargoItem());
-        mMap.clear();
-        hideSearchEventItems();
-
-    }
-
-    @OnClick(R.id.cancelButton)
-    public void cancelButtonClick() {
-        VS.cleanCargoItem();
-        mMap.clear();
-        hideSearchEventItems();
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
-        drawTransportationMarkers(currentSelect);
-    }
-
 
     public void drawTransportationMarkers(HashMap<String, TransportationItem> transportationItemHashMap) {
         for (TransportationItem transportationItem : transportationItemHashMap.values()) {
