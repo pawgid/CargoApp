@@ -27,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -39,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,17 +51,23 @@ import static com.cargocrew.cargoapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private static final int REQUEST_ACCESS_FINE_LOCATION = 10001;
+    public static final int REQUEST_ACCESS_FINE_LOCATION = 1001;
+
     public static GoogleMap mMap;
+
     private List<Marker> currentRouteMarkerList = new ArrayList<>();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
+    private DatabaseReference truckRef = database.getInstance().getReference("Truck");
+//    private List<TransportationItem> cargoItemList = new ArrayList();
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
-    DatabaseReference truckRef = database.getInstance().getReference("Truck");
-    ValuesSingleton VS = ValuesSingleton.getInstance();
+    private HashMap<String, TransportationItem> cargoHashMap = new HashMap<>();
+    private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
 
-    List<TransportationItem> cargoItemList = new ArrayList();
-    List<TransportationItem> truckItemList = new ArrayList();
+    private HashMap<String, TransportationItem> currentSelect = new HashMap<>();
+
+
+    private ValuesSingleton VS = ValuesSingleton.getInstance();
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
@@ -85,8 +93,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.floatingActionButtonSwitch)
     public void floatingActionButtonSwitchClick() {
+        if(currentSelect == cargoHashMap){
+            currentSelect = truckHashMap;
+        }else {
+            currentSelect = cargoHashMap;
+        }
 
-
+        mMap.clear();
+        drawTransportationMarkers(currentSelect);
     }
 
 
@@ -96,6 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
 
+        currentSelect = cargoHashMap;
 
         if (!haveLocationPermission()) return;
 
@@ -141,11 +156,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        LatLng poznan = new LatLng(52.4004458, 16.7615836);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(poznan));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(6.0f));
+        LatLng polandCenter = new LatLng(52.069381, 19.480334);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(polandCenter));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5.4f));
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -165,20 +181,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public boolean onMarkerClick(Marker arg0) {
-                    Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
                 TransportationItem tag = (TransportationItem) arg0.getTag();
 
-                
 
-                final LatLng origin = tag.getOrigin().toLatLong();
-                final LatLng dest = tag.getDestination().toLatLong();
+
+                LatLng origin = tag.getOrigin().toLatLong();
+                LatLng dest = tag.getDestination().toLatLong();
                 Services s = new Services();
                 String url = s.getDirectionsUrl(origin, dest);
                 DownloadTask downloadTask = new DownloadTask();
+
+                //TODO zawieszenie działania listnera na baze danych - przez zmienna globalna
+
+                mMap.clear();
+                final Marker startMarker = mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
+                final Marker destMarker = mMap.addMarker(new MarkerOptions().position(dest).title("Dest"));
                 downloadTask.execute(url);
 
+                ArrayList<Marker> markers = new ArrayList<Marker>();
+                markers.add(startMarker);
+                markers.add(destMarker);
 
+                final CameraPosition cameraPosition = mMap.getCameraPosition();
 
+                settingZoom(markers);
+
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(com.google.android.gms.maps.model.LatLng latLng) {
+                        mMap.clear();
+                        drawTransportationMarkers(currentSelect);
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                            @Override
+                            public void onMapClick(com.google.android.gms.maps.model.LatLng latLng) {
+                                showSearchEventItems();
+                                getRoute(latLng);
+                            }
+                        });
+                    }
+                });
 
                 return true;
             }
@@ -206,9 +249,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
-                saveDataFromSnapshot(dataSnapshot, cargoItemList);
+                saveDataFromSnapshot(dataSnapshot, cargoHashMap);
                 mMap.clear();
-                drawTransportationMarkers(cargoItemList);
+                drawTransportationMarkers(currentSelect);
 
             }
 
@@ -216,9 +259,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
 
-                saveDataFromSnapshot(dataSnapshot, cargoItemList);
+                saveDataFromSnapshot(dataSnapshot, cargoHashMap);
                 mMap.clear();
-                drawTransportationMarkers(cargoItemList);
+                drawTransportationMarkers(currentSelect);
 
             }
 
@@ -241,13 +284,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void saveDataFromSnapshot(DataSnapshot dataSnapshot, List<TransportationItem> transportationItemsList) {
-        transportationItemsList.clear();
+    private void saveDataFromSnapshot(DataSnapshot dataSnapshot, HashMap<String, TransportationItem> transportationItemHashMap) {
         for (DataSnapshot data : dataSnapshot.getChildren()) {
             String key = data.getKey();
-            CargoItem value = data.getValue(CargoItem.class);
-            value.setKey(key);
-            transportationItemsList.add(value);
+
+            if (!transportationItemHashMap.containsKey(key)) {
+                CargoItem value = data.getValue(CargoItem.class);
+                value.setKey(key);
+                transportationItemHashMap.put(key, value);
+            }
         }
     }
 
@@ -274,6 +319,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             searchEditText.setText("");
             VS.setCargoItemOrigin(currentRouteMarkerList.get(0).getPosition());
             settingZoom(currentRouteMarkerList);
+
+            Geocoder geocoder = new Geocoder(this);
+            Address address = null;
+            try {
+                address = geocoder.getFromLocation(currentRouteMarkerList.get(0).getPosition().latitude, currentRouteMarkerList.get(0).getPosition().longitude, 1).get(0);
+                Toast.makeText(this, address.getPostalCode().toString(), Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
         } else if (currentRouteMarkerList.size() == 1) {
 
@@ -332,6 +387,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String key = cargoRef.push().getKey();
         cargoRef.child("Storage").child(key).setValue(VS.getCargoItem());
         mMap.clear();
+        hideSearchEventItems();
 
     }
 
@@ -341,12 +397,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         hideSearchEventItems();
         mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
-        drawTransportationMarkers(cargoItemList);
+        drawTransportationMarkers(currentSelect);
     }
 
 
-    public void drawTransportationMarkers(List<TransportationItem> transportationItemsList) {
-        for (TransportationItem transportationItem : transportationItemsList) {
+    public void drawTransportationMarkers(HashMap<String, TransportationItem> transportationItemHashMap) {
+        for (TransportationItem transportationItem : transportationItemHashMap.values()) {
             Marker marker = mMap.addMarker(new MarkerOptions().position(transportationItem.getOrigin().toLatLong()));
             marker.setTitle(transportationItem.getName());
             marker.setTag(transportationItem);
