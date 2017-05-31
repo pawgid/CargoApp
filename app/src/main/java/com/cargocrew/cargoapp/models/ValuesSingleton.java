@@ -22,9 +22,9 @@ public class ValuesSingleton {
     }
 
 
-    @Setter
-    @Getter
-    private boolean searchClickable = false;
+//    @Setter
+//    @Getter
+//    private boolean searchClickable = false;
 
     @Setter
     @Getter

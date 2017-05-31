@@ -1,6 +1,7 @@
 package com.cargocrew.cargoapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,6 +62,7 @@ import static com.cargocrew.cargoapp.R.id.map;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final int REQUEST_ACCESS_FINE_LOCATION = 1001;
+    public static Context mContext;
 
     public static GoogleMap mMap;
 
@@ -68,10 +70,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
     private DatabaseReference truckRef = database.getInstance().getReference("Truck");
-
-//    private HashMap<String, Marker> cargoMarkerHashMap = new HashMap<>();
-//    private HashMap<String, Marker> truckMarkerHashMap = new HashMap<>();
-//    private HashMap<String, Marker> currentMarkerHashMap = new HashMap<>();
 
     private HashMap<String, TransportationItem> cargoHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
@@ -119,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             floatingActionButtonSwitch.setImageDrawable(getResources().getDrawable(R.drawable.cargo_icon));
         }
 
-
+        hideSearchEventItems();
         mMap.clear();
         drawTransportationMarkers(currentSelect);
     }
@@ -152,12 +150,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.floatingActionButtonSearch)
     public void search() {
-        if (VS.isSearchClickable()) {
             String location = searchEditText.getText().toString();
             if (location != null && !location.equals("")) {
                 LatLng coordinationAsLatLng = getCoordinationFromName(location);
                 getRoute(coordinationAsLatLng);
-            }
         }
     }
 
@@ -207,6 +203,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        mContext = getBaseContext();
         mMap = googleMap;
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         LatLng polandCenter = new LatLng(52.069381, 19.480334);
@@ -423,6 +420,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            searchEditText.setHint("Enter destination");
 
 
         } else if (currentRouteMarkerList.size() == 1) {
@@ -443,6 +441,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             settingZoom(currentRouteMarkerList);
 
             currentRouteMarkerList.clear();
+            searchEditText.setHint("Enter start location");
+            searchEditText.setVisibility(View.GONE);
 
         } else {
             Log.i("M", "getRoute error");

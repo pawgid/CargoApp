@@ -15,39 +15,31 @@
         android:layout_alignParentTop="true"
         tools:context="com.cargocrew.cargoapp.MapsActivity" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_password"
+
+
+    <EditText
+        android:id="@+id/searchEditText"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/map"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp">
-
-        <EditText
-            android:id="@+id/searchEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-
-            android:ems="10"
-            android:hint="Enter start location"
-
-            android:inputType="textPersonName"
-            android:visibility="visible" />
-
-    </android.support.design.widget.TextInputLayout>
+        android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+        android:ems="10"
+        android:layout_marginTop="35dp"
+        android:hint="Enter start location"
+        android:inputType="textPersonName" />
 
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/nameEditText"
@@ -98,9 +90,10 @@
         android:clickable="true"
         app:elevation="5dp"
         app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_menu_mapmode" />
+        app:srcCompat="@drawable/plus_circle_outline" />
 
     <android.support.design.widget.FloatingActionButton
+        android:visibility="gone"
         android:id="@+id/floatingActionButtonSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -108,10 +101,9 @@
         android:layout_marginEnd="35dp"
         android:layout_marginTop="35dp"
         android:clickable="true"
-        android:visibility="gone"
         app:elevation="5dp"
         app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+        app:srcCompat="@drawable/magnify" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButtonSwitch"
