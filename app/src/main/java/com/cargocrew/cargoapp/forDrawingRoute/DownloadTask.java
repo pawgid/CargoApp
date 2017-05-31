@@ -163,7 +163,6 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
             try {
                 Polyline polyline = mMap.addPolyline(lineOptions);
                 ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
-                valuesSingleton.setPolyline(polyline);
                 valuesSingleton.setSearchClickable(true);
 
             }catch (NullPointerException e)

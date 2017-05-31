@@ -2,6 +2,10 @@ package com.cargocrew.cargoapp;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -28,6 +32,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -50,6 +55,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.cargocrew.cargoapp.R.id.image;
 import static com.cargocrew.cargoapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -63,15 +69,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
     private DatabaseReference truckRef = database.getInstance().getReference("Truck");
 
-    private HashMap<String, Marker> cargoMarkerHashMap = new HashMap<>();
-    private HashMap<String, Marker> truckMarkerHashMap = new HashMap<>();
-    private HashMap<String, Marker> currentMarkerHashMap = new HashMap<>();
+//    private HashMap<String, Marker> cargoMarkerHashMap = new HashMap<>();
+//    private HashMap<String, Marker> truckMarkerHashMap = new HashMap<>();
+//    private HashMap<String, Marker> currentMarkerHashMap = new HashMap<>();
 
     private HashMap<String, TransportationItem> cargoHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> currentSelect = new HashMap<>();
 
 
+    public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
 
     @BindView(R.id.searchEditText)
@@ -101,12 +108,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         showSearchEventItems();
     }
 
+
     @OnClick(R.id.floatingActionButtonSwitch)
     public void floatingActionButtonSwitchClick() {
         if (currentSelect == cargoHashMap) {
             currentSelect = truckHashMap;
+            floatingActionButtonSwitch.setImageDrawable(getResources().getDrawable(R.drawable.truck));
         } else {
             currentSelect = cargoHashMap;
+            floatingActionButtonSwitch.setImageDrawable(getResources().getDrawable(R.drawable.cargo_icon));
         }
 
 
@@ -120,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         String key = cargoRef.push().getKey();
         if (currentSelect == cargoHashMap) {
-            cargoRef.child("Storage").child(key).setValue(VS.getCargoItem());
+            cargoRef.child(key).setValue(VS.getCargoItem());
         } else {
             truckRef.child(key).setValue(VS.getCargoItem());
         }
@@ -278,9 +288,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
-                saveDataFromSnapshot(dataSnapshot, cargoHashMap);
+                String key = dataSnapshot.getKey();
+                CargoItem cargoItem = dataSnapshot.getValue(CargoItem.class);
+                cargoHashMap.put(key, cargoItem);
 
-                if (currentSelect == cargoHashMap) {
+                if (mapRefreshable && currentSelect == cargoHashMap) {
                     mMap.clear();
                     drawTransportationMarkers(currentSelect);
                 }
@@ -289,18 +301,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
-
-                saveDataFromSnapshot(dataSnapshot, cargoHashMap);
-
-                if (currentSelect == cargoHashMap) {
-                    mMap.clear();
-                    drawTransportationMarkers(currentSelect);
-                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Toast.makeText(MapsActivity.this, "onChildRemoved", Toast.LENGTH_SHORT).show();
+
+                String key = dataSnapshot.getKey();
+                if (cargoHashMap.containsKey(key)) {
+                    cargoHashMap.remove(key);
+                }
+
+                if (mapRefreshable && currentSelect == cargoHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
+                }
             }
 
             @Override
@@ -322,14 +337,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 String key = dataSnapshot.getKey();
                 TruckItem truckItem = dataSnapshot.getValue(TruckItem.class);
-
                 truckHashMap.put(key, truckItem);
 
-                Boolean visibility = (currentSelect == truckHashMap);
-                Marker marker = mMap.addMarker(new MarkerOptions().position(truckItem.getOrigin().toLatLong()).visible(visibility));
-                truckMarkerHashMap.put(key, marker);
-                
-
+                if (mapRefreshable && currentSelect == truckHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
+                }
             }
 
             @Override
@@ -345,14 +358,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (truckHashMap.containsKey(key)) {
                     truckHashMap.remove(key);
                 }
-                if (truckMarkerHashMap.containsKey(key)) {
-                    Marker marker = truckMarkerHashMap.get(key);
-                    marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    marker.remove();
 
+                if (mapRefreshable && currentSelect == truckHashMap) {
+                    mMap.clear();
+                    drawTransportationMarkers(currentSelect);
                 }
-
-
             }
 
             @Override
@@ -367,6 +377,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
+
 
     private void saveDataFromSnapshot(DataSnapshot dataSnapshot, HashMap<String, TransportationItem> transportationItemHashMap) {
         for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -459,6 +470,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void drawTransportationMarkers(HashMap<String, TransportationItem> transportationItemHashMap) {
+
+//         @TODO Ustawianie różnych ikonek na makrery
+//        Drawable drawable = getResources().getDrawable(R.drawable.truck);
+//        if (currentSelect == cargoHashMap)
+//        drawable = getResources().getDrawable(R.drawable.cargo_icon);
+//
+//        Canvas canvas = new Canvas();
+//        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        canvas.setBitmap(bitmap);
+//        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+//        drawable.draw(canvas);
+//        BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(bitmap);
+//        @TODO Pamiętać dodać .icon do rysowania markera
+
+
         for (TransportationItem transportationItem : transportationItemHashMap.values()) {
             Marker marker = mMap.addMarker(new MarkerOptions().position(transportationItem.getOrigin().toLatLong()));
             marker.setTitle(transportationItem.getName());
