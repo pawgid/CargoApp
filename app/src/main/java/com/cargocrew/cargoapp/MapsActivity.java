@@ -28,6 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -62,9 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
     private DatabaseReference truckRef = database.getInstance().getReference("Truck");
 
-    private HashMap<String,Marker> cargoMarkerHashMap = new HashMap<>();
-    private HashMap<String,Marker> truckMarkerHashMap = new HashMap<>();
-    private HashMap<String,Marker> currentMarkerHashMap = new HashMap<>();
+    private HashMap<String, Marker> cargoMarkerHashMap = new HashMap<>();
+    private HashMap<String, Marker> truckMarkerHashMap = new HashMap<>();
+    private HashMap<String, Marker> currentMarkerHashMap = new HashMap<>();
 
     private HashMap<String, TransportationItem> cargoHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
@@ -235,8 +236,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //TODO zawieszenie działania listnera na baze danych - przez zmienna globalna
 
                 mMap.clear();
-                final Marker startMarker = mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
-                final Marker destMarker = mMap.addMarker(new MarkerOptions().position(dest).title("Dest"));
+                Marker startMarker = mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
+                Marker destMarker = mMap.addMarker(new MarkerOptions().position(dest).title("Dest"));
                 downloadTask.execute(url);
 
                 ArrayList<Marker> markers = new ArrayList<>();
@@ -314,7 +315,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-
         truckRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -323,11 +323,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String key = dataSnapshot.getKey();
                 TruckItem truckItem = dataSnapshot.getValue(TruckItem.class);
 
-                truckHashMap.put(key,truckItem);
+                truckHashMap.put(key, truckItem);
 
-                Boolean visibility = (currentSelect==truckHashMap);
+                Boolean visibility = (currentSelect == truckHashMap);
                 Marker marker = mMap.addMarker(new MarkerOptions().position(truckItem.getOrigin().toLatLong()).visible(visibility));
-                truckMarkerHashMap.put(key,marker);
+                truckMarkerHashMap.put(key, marker);
+                
 
             }
 
@@ -341,11 +342,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "onChildRemoved", Toast.LENGTH_SHORT).show();
 
                 String key = dataSnapshot.getKey();
-                if(truckHashMap.containsKey(key)){
-                    truckMarkerHashMap.remove(key);}
-                if(truckMarkerHashMap.containsKey(key)){
+                if (truckHashMap.containsKey(key)) {
+                    truckHashMap.remove(key);
+                }
+                if (truckMarkerHashMap.containsKey(key)) {
                     Marker marker = truckMarkerHashMap.get(key);
-                    marker.remove();}
+                    marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    marker.remove();
+
+                }
 
 
             }
@@ -409,15 +414,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
-
         } else if (currentRouteMarkerList.size() == 1) {
-
 
 
             currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
             searchEditText.setText("");
             VS.setCargoItemDestination(currentRouteMarkerList.get(1).getPosition());
-
 
 
             LatLng origin = currentRouteMarkerList.get(0).getPosition();
