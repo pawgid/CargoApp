@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static GoogleMap mMap;
 
     private final int MAP_ONCLICK_NULL = 100;
-    private final int MAP_ONCLICK_ZOOM_OUT = 101;
+    private final int MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL = 101;
     private final int MAP_ONCLICK_ADD_MARKER = 102;
 
     private int mapOnClickState = MAP_ONCLICK_NULL;
@@ -75,6 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> currentSelect = new HashMap<>();
 
+    private String selectedMarker = null;
     private CameraPosition cameraPosition = null;
     public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
@@ -100,13 +101,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.sendButton)
     Button sendButton;
 
+    @BindView(R.id.cargoDetailBar)
+    LinearLayout cargoDetailBar;
+
+    @BindView(R.id.truckDetailBar)
+    LinearLayout truckDetailBar;
+
+    @BindView(R.id.addCargoBar)
+    LinearLayout addCargoBar;
+
+    @BindView(R.id.addTruckBar)
+    LinearLayout addTruckBar;
+
+
     @OnClick(R.id.floatingActionButtonOpenSearch)
     public void floatingActionButtonOpenSearchClick() {
         mMap.clear();
         showSearchEventItems();
-        mapOnClickState=MAP_ONCLICK_ADD_MARKER;
-    }
+        mapOnClickState = MAP_ONCLICK_ADD_MARKER;
 
+        if (currentSelect == cargoHashMap)
+            addCargoBar.setVisibility(View.VISIBLE);
+        if (currentSelect == truckHashMap)
+            addTruckBar.setVisibility(View.VISIBLE);
+
+
+    }
 
     @OnClick(R.id.floatingActionButtonSwitch)
     public void floatingActionButtonSwitchClick() {
@@ -138,6 +158,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         drawTransportationMarkers(currentSelect);
         mapRefreshable = true;
+        addCargoBar.setVisibility(View.GONE);
+        addTruckBar.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.cancelButton)
@@ -149,7 +171,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
         drawTransportationMarkers(currentSelect);
         mapRefreshable = true;
-        mapOnClickState=MAP_ONCLICK_NULL;
+        mapOnClickState = MAP_ONCLICK_NULL;
+
+        addCargoBar.setVisibility(View.GONE);
+        addTruckBar.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.floatingActionButtonSearch)
@@ -232,13 +257,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         getRoute(latLng);
 
                         break;
-                    case MAP_ONCLICK_ZOOM_OUT:
+                    case MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL:
                         mMap.clear();
                         mapRefreshable = true;
                         drawTransportationMarkers(currentSelect);
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         mapOnClickState = MAP_ONCLICK_NULL;
-
+                        cargoDetailBar.setVisibility(View.GONE);
+                        truckDetailBar.setVisibility(View.GONE);
+                        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
+                        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
                         break;
                     default:
                         break;
@@ -251,8 +279,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker arg0) {
                 Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+
+                floatingActionButtonSwitch.setVisibility(View.GONE);
+                floatingActionButtonOpenSearch.setVisibility(View.GONE);
+
                 TransportationItem tag = (TransportationItem) arg0.getTag();
 
+//               TODO Przekazać informację jaki obiekt ma klucz - zmienić tag na parę <ID, TransportItem>
 
                 LatLng origin = tag.getOrigin().toLatLong();
                 LatLng dest = tag.getDestination().toLatLong();
@@ -260,7 +293,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String url = s.getDirectionsUrl(origin, dest);
                 DownloadTask downloadTask = new DownloadTask();
 
-                //TODO zawieszenie działania listnera na baze danych - przez zmienna globalna
                 mapRefreshable = false;
 
                 mMap.clear();
@@ -272,10 +304,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 markers.add(startMarker);
                 markers.add(destMarker);
 
+                if (tag.getClass() == CargoItem.class)
+                    cargoDetailBar.setVisibility(View.VISIBLE);
+                if (tag.getClass() == TruckItem.class)
+                    truckDetailBar.setVisibility(View.VISIBLE);
+
+
                 cameraPosition = mMap.getCameraPosition();
 
                 settingZoom(markers);
-                mapOnClickState = MAP_ONCLICK_ZOOM_OUT;
+                mapOnClickState = MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL;
 
 
                 return true;

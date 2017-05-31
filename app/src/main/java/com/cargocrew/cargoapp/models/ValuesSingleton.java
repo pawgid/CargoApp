@@ -21,11 +21,6 @@ public class ValuesSingleton {
     private ValuesSingleton() {
     }
 
-
-//    @Setter
-//    @Getter
-//    private boolean searchClickable = false;
-
     @Setter
     @Getter
     CargoItem cargoItem = new CargoItem();
