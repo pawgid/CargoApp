@@ -3,10 +3,6 @@ package com.cargocrew.cargoapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -33,8 +29,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -56,15 +50,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.cargocrew.cargoapp.R.id.image;
 import static com.cargocrew.cargoapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final int REQUEST_ACCESS_FINE_LOCATION = 1001;
+
     public static Context mContext;
 
     public static GoogleMap mMap;
+
+    private final int MAP_ONCLICK_NULL = 100;
+    private final int MAP_ONCLICK_ZOOM_OUT = 101;
+    private final int MAP_ONCLICK_ADD_MARKER = 102;
+
+    private int mapOnClickState = MAP_ONCLICK_NULL;
 
     private List<Marker> currentRouteMarkerList = new ArrayList<>();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -75,7 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private HashMap<String, TransportationItem> truckHashMap = new HashMap<>();
     private HashMap<String, TransportationItem> currentSelect = new HashMap<>();
 
-
+    private CameraPosition cameraPosition = null;
     public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
 
@@ -104,6 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void floatingActionButtonOpenSearchClick() {
         mMap.clear();
         showSearchEventItems();
+        mapOnClickState=MAP_ONCLICK_ADD_MARKER;
     }
 
 
@@ -136,6 +137,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         hideSearchEventItems();
 
         drawTransportationMarkers(currentSelect);
+        mapRefreshable = true;
     }
 
     @OnClick(R.id.cancelButton)
@@ -146,14 +148,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         hideSearchEventItems();
         mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
         drawTransportationMarkers(currentSelect);
+        mapRefreshable = true;
+        mapOnClickState=MAP_ONCLICK_NULL;
     }
 
     @OnClick(R.id.floatingActionButtonSearch)
     public void search() {
-            String location = searchEditText.getText().toString();
-            if (location != null && !location.equals("")) {
-                LatLng coordinationAsLatLng = getCoordinationFromName(location);
-                getRoute(coordinationAsLatLng);
+        String location = searchEditText.getText().toString();
+        if (location != null && !location.equals("")) {
+            LatLng coordinationAsLatLng = getCoordinationFromName(location);
+            getRoute(coordinationAsLatLng);
         }
     }
 
@@ -207,9 +211,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         LatLng polandCenter = new LatLng(52.069381, 19.480334);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(polandCenter));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(5.4f));
-
+        cameraPosition = CameraPosition.builder().zoom(5.4f).target(polandCenter).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map));
 
 
@@ -222,8 +225,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(com.google.android.gms.maps.model.LatLng latLng) {
-                showSearchEventItems();
-                getRoute(latLng);
+
+                switch (mapOnClickState) {
+                    case MAP_ONCLICK_ADD_MARKER:
+                        showSearchEventItems();
+                        getRoute(latLng);
+
+                        break;
+                    case MAP_ONCLICK_ZOOM_OUT:
+                        mMap.clear();
+                        mapRefreshable = true;
+                        drawTransportationMarkers(currentSelect);
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mapOnClickState = MAP_ONCLICK_NULL;
+
+                        break;
+                    default:
+                        break;
+                }
+
             }
         });
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -241,6 +261,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 DownloadTask downloadTask = new DownloadTask();
 
                 //TODO zawieszenie działania listnera na baze danych - przez zmienna globalna
+                mapRefreshable = false;
 
                 mMap.clear();
                 Marker startMarker = mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
@@ -251,25 +272,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 markers.add(startMarker);
                 markers.add(destMarker);
 
-                final CameraPosition cameraPosition = mMap.getCameraPosition();
+                cameraPosition = mMap.getCameraPosition();
 
                 settingZoom(markers);
+                mapOnClickState = MAP_ONCLICK_ZOOM_OUT;
 
-                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(com.google.android.gms.maps.model.LatLng latLng) {
-                        mMap.clear();
-                        drawTransportationMarkers(currentSelect);
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                            @Override
-                            public void onMapClick(com.google.android.gms.maps.model.LatLng latLng) {
-                                showSearchEventItems();
-                                getRoute(latLng);
-                            }
-                        });
-                    }
-                });
 
                 return true;
             }
@@ -375,19 +382,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-    private void saveDataFromSnapshot(DataSnapshot dataSnapshot, HashMap<String, TransportationItem> transportationItemHashMap) {
-        for (DataSnapshot data : dataSnapshot.getChildren()) {
-            String key = data.getKey();
-
-            if (!transportationItemHashMap.containsKey(key)) {
-                CargoItem value = data.getValue(CargoItem.class);
-                value.setKey(key);
-                transportationItemHashMap.put(key, value);
-            }
-        }
-    }
-
     private LatLng getCoordinationFromName(String location) {
         Geocoder geocoder = new Geocoder(this);
         Address address = null;
@@ -402,6 +396,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void getRoute(LatLng coordination) {
 
+        mapRefreshable = false;
 
         if (currentRouteMarkerList.size() == 0) {
 
@@ -443,6 +438,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currentRouteMarkerList.clear();
             searchEditText.setHint("Enter start location");
             searchEditText.setVisibility(View.GONE);
+            mapOnClickState = MAP_ONCLICK_NULL;
 
         } else {
             Log.i("M", "getRoute error");
