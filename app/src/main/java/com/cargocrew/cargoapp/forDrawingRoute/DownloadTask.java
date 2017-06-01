@@ -3,6 +3,8 @@ package com.cargocrew.cargoapp.forDrawingRoute;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.cargocrew.cargoapp.MapsActivity.mContext;
 import static com.cargocrew.cargoapp.MapsActivity.mMap;
 
 /**
@@ -155,15 +158,15 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(Color.BLUE);
+                lineOptions.width(8);
+                int color = ResourcesCompat.getColor(mContext.getResources(), R.color.colorPrimary, null);
+                lineOptions.color(color);
             }
 
             // Drawing polyline in the Google Map for the i-th route
             try {
                 Polyline polyline = mMap.addPolyline(lineOptions);
                 ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
-                valuesSingleton.setSearchClickable(true);
 
             }catch (NullPointerException e)
             {
