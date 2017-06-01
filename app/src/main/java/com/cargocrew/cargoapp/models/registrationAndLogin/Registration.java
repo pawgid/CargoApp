@@ -103,7 +103,7 @@ public class Registration extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 } else {
 
-                                    startActivity(new Intent(Registration.this, MainActivity.class));
+                                    startActivity(new Intent(Registration.this, MapsActivity.class));
                                     finish();
                                 }
                             }

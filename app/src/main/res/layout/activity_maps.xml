@@ -12,8 +12,9 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:context="com.cargocrew.cargoapp.MapsActivity"
         android:layout_alignParentTop="true"
-        tools:context="com.cargocrew.cargoapp.MapsActivity" />
+        android:layout_toEndOf="@+id/searchEditText" />
 
 
 
@@ -185,6 +186,17 @@
         app:elevation="5dp"
         app:fabSize="mini"
         app:srcCompat="@drawable/cargo_icon" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingLoginOptionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/floatingActionButtonOpenSearch"
+        android:layout_below="@+id/floatingActionButtonOpenSearch"
+        android:layout_marginTop="30dp"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/three_dots" />
 
 
 </RelativeLayout>

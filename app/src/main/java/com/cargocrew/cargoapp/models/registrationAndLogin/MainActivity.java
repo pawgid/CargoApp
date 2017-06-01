@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         changeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                progressBar.setVisibility(View.VISIBLE);
                 if (user != null && !newEmail.getText().toString().trim().equals("")) {
                     user.updateEmail(newEmail.getText().toString().trim())
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -116,16 +115,13 @@ public class MainActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(MainActivity.this, "Email address is updated. Please sign in with new email id!", Toast.LENGTH_LONG).show();
                                         signOut();
-//                                        progressBar.setVisibility(View.GONE);
                                     } else {
                                         Toast.makeText(MainActivity.this, "Failed to update email!", Toast.LENGTH_LONG).show();
-//                                        progressBar.setVisibility(View.GONE);
                                     }
                                 }
                             });
                 } else if (newEmail.getText().toString().trim().equals("")) {
                     newEmail.setError("Enter email");
-//                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
