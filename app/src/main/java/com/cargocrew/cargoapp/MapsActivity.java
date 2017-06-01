@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.Pair;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -116,7 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LinearLayout addTruckBar;
 
     @OnClick(R.id.deleteCargo)
-    public void deleteCargoClick(){
+    public void deleteCargoClick() {
         cargoRef.child(selectedMarker).removeValue();
 
 
@@ -320,13 +319,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 selectedMarker = (String) arg0.getTag();
 
-                TransportationItem markerTransportItem=null;
-                if(cargoHashMap.containsKey(selectedMarker))
-                    markerTransportItem=cargoHashMap.get(selectedMarker);
-                if(truckHashMap.containsKey(selectedMarker))
-                    markerTransportItem=truckHashMap.get(selectedMarker);
-
-
+                TransportationItem markerTransportItem = null;
+                if (cargoHashMap.containsKey(selectedMarker))
+                    markerTransportItem = cargoHashMap.get(selectedMarker);
+                if (truckHashMap.containsKey(selectedMarker))
+                    markerTransportItem = truckHashMap.get(selectedMarker);
 
 
                 LatLng origin = markerTransportItem.getOrigin().toLatLong();
@@ -350,7 +347,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     cargoDetailBar.setVisibility(View.VISIBLE);
                 if (markerTransportItem.getClass() == TruckItem.class)
                     truckDetailBar.setVisibility(View.VISIBLE);
-
 
                 cameraPosition = mMap.getCameraPosition();
 
