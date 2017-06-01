@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
             changeEmail, changePassword, sendEmail, remove, signOut;
 
     private EditText oldEmail, newEmail, password, newPassword;
-    //    private ProgressBar progressBar;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
 
@@ -35,10 +33,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle(getString(R.string.app_name));
-//        setSupportActionBar(toolbar);
 
         //get firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -83,12 +77,6 @@ public class MainActivity extends AppCompatActivity {
         changePassword.setVisibility(View.GONE);
         sendEmail.setVisibility(View.GONE);
         remove.setVisibility(View.GONE);
-
-//        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-//        if (progressBar != null) {
-//            progressBar.setVisibility(View.GONE);
-//        }
 
         btnChangeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,11 +131,9 @@ public class MainActivity extends AppCompatActivity {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                progressBar.setVisibility(View.VISIBLE);
                 if (user != null && !newPassword.getText().toString().trim().equals("")) {
                     if (newPassword.getText().toString().trim().length() < 6) {
                         newPassword.setError("Password too short, enter minimum 6 characters");
-//                        progressBar.setVisibility(View.GONE);
                     } else {
                         user.updatePassword(newPassword.getText().toString().trim())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -156,17 +142,14 @@ public class MainActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             Toast.makeText(MainActivity.this, "Password is updated, sign in with new password!", Toast.LENGTH_SHORT).show();
                                             signOut();
-//                                            progressBar.setVisibility(View.GONE);
                                         } else {
                                             Toast.makeText(MainActivity.this, "Failed to update password!", Toast.LENGTH_SHORT).show();
-//                                            progressBar.setVisibility(View.GONE);
                                         }
                                     }
                                 });
                     }
                 } else if (newPassword.getText().toString().trim().equals("")) {
                     newPassword.setError("Enter password");
-//                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
@@ -188,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
         sendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                progressBar.setVisibility(View.VISIBLE);
                 if (!oldEmail.getText().toString().trim().equals("")) {
                     auth.sendPasswordResetEmail(oldEmail.getText().toString().trim())
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -196,16 +178,13 @@ public class MainActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(MainActivity.this, "Reset password email is sent!", Toast.LENGTH_SHORT).show();
-//                                        progressBar.setVisibility(View.GONE);
                                     } else {
                                         Toast.makeText(MainActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
-//                                        progressBar.setVisibility(View.GONE);
                                     }
                                 }
                             });
                 } else {
                     oldEmail.setError("Enter email");
-//                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
@@ -213,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
         btnRemoveUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                progressBar.setVisibility(View.VISIBLE);
                 if (user != null) {
                     user.delete()
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -223,10 +201,8 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(MainActivity.this, Registration.class));
                                         finish();
-//                                        progressBar.setVisibility(View.GONE);
                                     } else {
                                         Toast.makeText(MainActivity.this, "Failed to delete your account!", Toast.LENGTH_SHORT).show();
-//                                        progressBar.setVisibility(View.GONE);
                                     }
                                 }
                             });
@@ -251,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        progressBar.setVisibility(View.GONE);
     }
 
     @Override
