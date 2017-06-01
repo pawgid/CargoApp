@@ -16,175 +16,518 @@
         tools:context="com.cargocrew.cargoapp.MapsActivity" />
 
 
-
     <EditText
         android:id="@+id/searchEditText"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/map"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
         android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
         android:ems="10"
-        android:layout_marginTop="35dp"
         android:hint="Enter start location"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:visibility="gone" />
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/truckDetailBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="truckDetailBar"/>
-        <Button
-            android:text="del"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/truckCargo"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Car Type"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+
+                <TextView
+                    android:id="@+id/truckTypeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+                <TextView
+                    android:id="@+id/truckDateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="date" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tel."
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+                <TextView
+                    android:id="@+id/truckTelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/deleteTruck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="del" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/cargoDetailBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="cargoDetailBar"/>
-        <Button
-            android:text="del"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/deleteCargo"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/addTruckBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:orientation="vertical">
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="addTruckBar"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:visibility="gone"
         android:id="@+id/addCargoBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <EditText
-            android:layout_width="wrap_content"
+            android:id="@+id/destEditText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="addCargoBar"/>
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Destination" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/zipCodeEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="15"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="zip-code" />
+
+            <EditText
+                android:id="@+id/countryEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="country code" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/lengthEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="length (cm)" />
+
+            <EditText
+                android:id="@+id/widthEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="width (cm)" />
+
+            <EditText
+                android:id="@+id/heightEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="height (cm)" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/weightEditText"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="weight (kg)" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/detailsEditText"
+                android:layout_width="match_parent"
+                android:layout_height="95dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Additional details" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/phoneNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.37"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Contact details/Phone number" />
+
+        <EditText
+            android:id="@+id/estimEditText"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="estimated BUDGET" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancelButtonn"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancel" />
+
+            <Button
+                android:id="@+id/order"
+                android:layout_width="158dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Order" />
+        </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/bottomBar"
+        android:id="@+id/addTruckBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="50dp"
+        android:layout_margin="20dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/nameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Name"
-            android:inputType="textPersonName" />
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-
-            <Button
-                android:id="@+id/cancelButton"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="X" />
+                android:layout_gravity="right"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/sendButton"
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Car Type"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+
+                <EditText
+                    android:id="@+id/truckTypeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ok" />
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+                <EditText
+                    android:id="@+id/truckDateEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="date" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tel."
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+                <EditText
+                    android:id="@+id/truckTelEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="number" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/truckAddButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OK" />
+
+                <Button
+                    android:id="@+id/truckCancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel" />
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButtonOpenSearch"
+    <LinearLayout
+        android:id="@+id/cargoDetailBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+            <TextView
+                android:id="@+id/deliveryAddressTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="delivery address" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/lenghtTextView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="lenght" />
+                <TextView
+                    android:id="@+id/widthTextView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="width" />
+                <TextView
+                    android:id="@+id/heightTextView"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="height" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/weightTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="weight" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"></LinearLayout>
+            <TextView
+                android:id="@+id/noteTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Additional note" />
+            <TextView
+                android:id="@+id/PhoneNumberTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Contact details" />
+            <TextView
+                android:id="@+id/BudgetTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$$$$" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/deleteCargo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Del" />
+                <RadioButton
+                    android:id="@+id/radioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="APPROVAL" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
+
+<LinearLayout
+android:id="@+id/bottomBar"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_alignParentBottom="true"
+android:layout_margin="50dp"
+android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
+android:orientation="vertical"
+android:visibility="gone">
+
+<EditText
+    android:id="@+id/nameEditText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Name"
+    android:inputType="textPersonName" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <Button
+        android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/map"
-        android:layout_marginEnd="35dp"
-        android:layout_marginTop="35dp"
-        android:clickable="true"
-        app:elevation="5dp"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/plus_circle_outline" />
+        android:layout_weight="1"
+        android:text="X" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:visibility="gone"
-        android:id="@+id/floatingActionButtonSearch"
+    <Button
+        android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/map"
-        android:layout_marginEnd="35dp"
-        android:layout_marginTop="35dp"
-        android:clickable="true"
-        app:elevation="5dp"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/magnify" />
+        android:layout_weight="1"
+        android:text="Ok" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButtonSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="35dp"
-        android:clickable="true"
-        app:elevation="5dp"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/cargo_icon" />
+</LinearLayout>
+
+</LinearLayout>
+
+<android.support.design.widget.FloatingActionButton
+android:id="@+id/floatingActionButtonOpenSearch"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_alignEnd="@+id/map"
+android:layout_marginEnd="35dp"
+android:layout_marginTop="35dp"
+android:clickable="true"
+app:elevation="5dp"
+app:fabSize="mini"
+app:srcCompat="@drawable/plus_circle_outline" />
+
+<android.support.design.widget.FloatingActionButton
+android:id="@+id/floatingActionButtonSearch"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_alignEnd="@+id/map"
+android:layout_marginEnd="35dp"
+android:layout_marginTop="35dp"
+android:clickable="true"
+android:visibility="gone"
+app:elevation="5dp"
+app:fabSize="mini"
+app:srcCompat="@drawable/magnify" />
+
+<android.support.design.widget.FloatingActionButton
+android:id="@+id/floatingActionButtonSwitch"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginStart="35dp"
+android:layout_marginTop="35dp"
+android:clickable="true"
+app:elevation="5dp"
+app:fabSize="mini"
+app:srcCompat="@drawable/cargo_icon" />
 
 
-</RelativeLayout>
+    </RelativeLayout>

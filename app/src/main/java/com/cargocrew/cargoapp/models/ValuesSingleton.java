@@ -29,10 +29,6 @@ public class ValuesSingleton {
         getCargoItem().setName(name);
     }
 
-    public void setCargoItemValue(int value) {
-        getCargoItem().setValue(value);
-    }
-
     public void setCargoItemDestination(LatLng destination) {
         getCargoItem().setDestination(new Point(destination));
     }
@@ -40,7 +36,6 @@ public class ValuesSingleton {
     public void setCargoItemOrigin(LatLng origin) {
         getCargoItem().setOrigin(new Point(origin));
     }
-
 
     public void cleanCargoItem() {
         cargoItem = new CargoItem();
