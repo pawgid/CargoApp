@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.Pair;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -112,6 +114,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @BindView(R.id.addTruckBar)
     LinearLayout addTruckBar;
+
+    @OnClick(R.id.deleteCargo)
+    public void deleteCargoClick(){
+        cargoRef.child(selectedMarker).removeValue();
+
+
+        mMap.clear();
+        mapRefreshable = true;
+        drawTransportationMarkers(currentSelect);
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mapOnClickState = MAP_ONCLICK_NULL;
+        cargoDetailBar.setVisibility(View.GONE);
+        truckDetailBar.setVisibility(View.GONE);
+        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
+        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.deleteTruck)
+    public void deleteTruckClick() {
+        truckRef.child(selectedMarker).removeValue();
+
+
+        mMap.clear();
+        mapRefreshable = true;
+        drawTransportationMarkers(currentSelect);
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mapOnClickState = MAP_ONCLICK_NULL;
+        cargoDetailBar.setVisibility(View.GONE);
+        truckDetailBar.setVisibility(View.GONE);
+        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
+        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
+    }
 
 
     @OnClick(R.id.floatingActionButtonOpenSearch)
@@ -283,12 +317,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 floatingActionButtonSwitch.setVisibility(View.GONE);
                 floatingActionButtonOpenSearch.setVisibility(View.GONE);
 
-                TransportationItem tag = (TransportationItem) arg0.getTag();
 
-//               TODO Przekazać informację jaki obiekt ma klucz - zmienić tag na parę <ID, TransportItem>
+                selectedMarker = (String) arg0.getTag();
 
-                LatLng origin = tag.getOrigin().toLatLong();
-                LatLng dest = tag.getDestination().toLatLong();
+                TransportationItem markerTransportItem=null;
+                if(cargoHashMap.containsKey(selectedMarker))
+                    markerTransportItem=cargoHashMap.get(selectedMarker);
+                if(truckHashMap.containsKey(selectedMarker))
+                    markerTransportItem=truckHashMap.get(selectedMarker);
+
+
+
+
+                LatLng origin = markerTransportItem.getOrigin().toLatLong();
+                LatLng dest = markerTransportItem.getDestination().toLatLong();
                 Services s = new Services();
                 String url = s.getDirectionsUrl(origin, dest);
                 DownloadTask downloadTask = new DownloadTask();
@@ -304,9 +346,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 markers.add(startMarker);
                 markers.add(destMarker);
 
-                if (tag.getClass() == CargoItem.class)
+                if (markerTransportItem.getClass() == CargoItem.class)
                     cargoDetailBar.setVisibility(View.VISIBLE);
-                if (tag.getClass() == TruckItem.class)
+                if (markerTransportItem.getClass() == TruckItem.class)
                     truckDetailBar.setVisibility(View.VISIBLE);
 
 
@@ -519,11 +561,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        @TODO Pamiętać dodać .icon do rysowania markera
 
 
-        for (TransportationItem transportationItem : transportationItemHashMap.values()) {
-            Marker marker = mMap.addMarker(new MarkerOptions().position(transportationItem.getOrigin().toLatLong()));
-            marker.setTitle(transportationItem.getName());
-            marker.setTag(transportationItem);
+        for (Map.Entry<String, TransportationItem> entry : transportationItemHashMap.entrySet()) {
+            Marker marker = mMap.addMarker(new MarkerOptions().position(entry.getValue().getOrigin().toLatLong()));
+            marker.setTitle(entry.getValue().getName());
+            marker.setTag(entry.getKey());
+//            marker.setTag(new Pair(entry.getKey(),entry.getValue()));
         }
+
     }
 
     public void showSearchEventItems() {

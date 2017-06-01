@@ -29,5 +29,14 @@ public abstract class TransportationItem implements Serializable {
     @Setter
     @Getter
     private String owner;
+    @Setter
+    @Getter
+    private String phoneNumber;
+    @Setter
+    @Getter
+    private String destZipCode;
+    @Getter
+    @Setter
+    private String destCountryCode;
 
 }
