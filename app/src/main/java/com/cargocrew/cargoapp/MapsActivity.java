@@ -2,6 +2,7 @@ package com.cargocrew.cargoapp;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -25,6 +26,7 @@ import com.cargocrew.cargoapp.models.CargoItem;
 import com.cargocrew.cargoapp.models.TransportationItem;
 import com.cargocrew.cargoapp.models.TruckItem;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
+import com.cargocrew.cargoapp.registrationAndLogin.MainActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -81,6 +83,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private CameraPosition cameraPosition = null;
     public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
+
+    private FloatingActionButton floatingLoginOptionsButton;
 
     @BindView(R.id.searchEditText)
     EditText searchEditText;
@@ -308,6 +312,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cargoDetailBudgetTextView.setText(String.valueOf(cargo.getOffer()));
     }
 
+
+
+
     @OnClick(R.id.floatingActionButtonOpenSearch)
     public void floatingActionButtonOpenSearchClick() {
         mMap.clear();
@@ -337,6 +344,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         drawTransportationMarkers(currentSelect);
     }
 
+
     @OnClick(R.id.floatingActionButtonSearch)
     public void search() {
         String location = searchEditText.getText().toString();
@@ -351,6 +359,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
+        floatingLoginOptionsButton = (FloatingActionButton) findViewById(R.id.floatingLoginOptionsButton);
+        floatingLoginOptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this, MainActivity.class));
+            }
+        });
+
 
         currentSelect = cargoHashMap;
 
