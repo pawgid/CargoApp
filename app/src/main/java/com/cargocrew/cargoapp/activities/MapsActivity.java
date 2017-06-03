@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,6 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private CameraPosition cameraPosition = null;
     public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
+    private FirebaseAuth auth;
+
 
     @BindView(R.id.searchEditTextWrapper)
     LinearLayout searchEditTextWrapper;
@@ -118,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button truckDetailCancelButton;
 
     @OnClick(R.id.truckDetaiAddButton)
-    public void truckDetaiAddButtonClick() {
+    public void truckDetailAddButtonClick() {
 
         TruckItem truckItem = new TruckItem();
         truckItem.setOrigin(VS.getCargoItem().getOrigin());
@@ -438,6 +441,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
+        auth = FirebaseAuth.getInstance();
+        String uid = auth.getCurrentUser().getUid();
+        Toast.makeText(MapsActivity.this, uid, Toast.LENGTH_SHORT).show();
 
         currentSelect = cargoHashMap;
 
@@ -802,5 +808,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchEditTextWrapper.setVisibility(View.GONE);
     }
 }
+
+
 
 
