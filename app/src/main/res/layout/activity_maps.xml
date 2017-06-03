@@ -12,9 +12,8 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.cargocrew.cargoapp.MapsActivity"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/searchEditText" />
+        tools:context="com.cargocrew.cargoapp.MapsActivity" />
 
 
     <EditText
@@ -28,7 +27,7 @@
         android:ems="10"
         android:hint="Enter start location"
         android:inputType="textPersonName"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/truckDetailBar"
@@ -529,8 +528,9 @@
         android:id="@+id/floatingActionButtonSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="35dp"
+        android:layout_alignEnd="@+id/map"
+        android:layout_marginEnd="35dp"
+        android:layout_marginTop="90dp"
         android:clickable="true"
         app:elevation="5dp"
         app:fabSize="mini"
@@ -540,10 +540,11 @@
         android:id="@+id/floatingLoginOptionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/floatingActionButtonOpenSearch"
-        android:layout_below="@+id/floatingActionButtonOpenSearch"
-        android:layout_marginTop="30dp"
+        android:layout_alignEnd="@+id/map"
+        android:layout_marginEnd="35dp"
+        android:layout_marginTop="145dp"
         android:clickable="true"
+        android:elevation="5dp"
         app:fabSize="mini"
         app:srcCompat="@drawable/three_dots" />
 
