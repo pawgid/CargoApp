@@ -84,9 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
 
-    private FloatingActionButton floatingLoginOptionsButton;
-
-    @BindView(R.id.searchEditText)
+       @BindView(R.id.searchEditText)
     EditText searchEditText;
 
     @BindView(R.id.floatingActionButtonSearch)
@@ -97,6 +95,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @BindView(R.id.floatingActionButtonSwitch)
     FloatingActionButton floatingActionButtonSwitch;
+
+    @BindView(R.id.floatingLoginOptionsButton)
+    FloatingActionButton floatingLoginOptionsButton;
 
 
     @BindView(R.id.addTruckBar)
@@ -298,7 +299,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String zipCode = cargoDetailZipCodeEditText.getText().toString();
         cargo.setDestZipCode(zipCode);
 
-        return cargo; 
+        return cargo;
     }
 
     public void bindViewFromCargo(CargoItem cargo) {
@@ -320,13 +321,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         showSearchEventItems();
         mapOnClickState = MAP_ONCLICK_ADD_MARKER;
-
-        if (currentSelect == cargoHashMap)
-            addCargoBar.setVisibility(View.VISIBLE);
-        if (currentSelect == truckHashMap)
-            addTruckBar.setVisibility(View.VISIBLE);
-
-
     }
 
     @OnClick(R.id.floatingActionButtonSwitch)
@@ -354,19 +348,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    @OnClick(R.id.floatingLoginOptionsButton)
+    public void floatingLoginOptionsButtonClick()
+    {
+        startActivity(new Intent(MapsActivity.this, MainActivity.class));
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
-        floatingLoginOptionsButton = (FloatingActionButton) findViewById(R.id.floatingLoginOptionsButton);
-        floatingLoginOptionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapsActivity.this, MainActivity.class));
-            }
-        });
-
 
         currentSelect = cargoHashMap;
 
@@ -443,6 +436,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         truckDetailBar.setVisibility(View.GONE);
                         floatingActionButtonSwitch.setVisibility(View.VISIBLE);
                         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
+                        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
                         break;
                     default:
                         break;
@@ -641,6 +635,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         } else if (currentRouteMarkerList.size() == 1) {
 
+            if (currentSelect == cargoHashMap)
+                addCargoBar.setVisibility(View.VISIBLE);
+            if (currentSelect == truckHashMap)
+                addTruckBar.setVisibility(View.VISIBLE);
 
             currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
             searchEditText.setText("");
@@ -714,12 +712,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void showSearchEventItems() {
         floatingActionButtonOpenSearch.setVisibility(View.GONE);
         floatingActionButtonSearch.setVisibility(View.VISIBLE);
+        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
         searchEditText.setVisibility(View.VISIBLE);
     }
 
     public void hideSearchEventItems() {
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
         floatingActionButtonSearch.setVisibility(View.GONE);
+        floatingLoginOptionsButton.setVisibility(View.GONE);
         searchEditText.setVisibility(View.GONE);
     }
 }
