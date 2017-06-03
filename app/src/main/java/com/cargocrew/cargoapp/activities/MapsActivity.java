@@ -1,4 +1,4 @@
-package com.cargocrew.cargoapp;
+package com.cargocrew.cargoapp.activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -20,13 +20,13 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cargocrew.cargoapp.R;
 import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
 import com.cargocrew.cargoapp.forDrawingRoute.Services;
 import com.cargocrew.cargoapp.models.CargoItem;
 import com.cargocrew.cargoapp.models.TransportationItem;
 import com.cargocrew.cargoapp.models.TruckItem;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
-import com.cargocrew.cargoapp.registrationAndLogin.MainActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -55,6 +55,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.cargocrew.cargoapp.R.id.floatingActionButtonSwitch;
 import static com.cargocrew.cargoapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -87,11 +88,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseAuth auth;
 
 
+    @BindView(R.id.searchEditTextWrapper)
+    LinearLayout searchEditTextWrapper;
+
     @BindView(R.id.searchEditText)
     EditText searchEditText;
 
-    @BindView(R.id.floatingActionButtonSearch)
-    FloatingActionButton floatingActionButtonSearch;
+    @BindView(R.id.ButtonSearch)
+    Button ButtonSearch;
 
     @BindView(R.id.floatingActionButtonOpenSearch)
     FloatingActionButton floatingActionButtonOpenSearch;
@@ -402,13 +406,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    @OnClick(R.id.floatingActionButtonSearch)
+    @OnClick(R.id.ButtonSearch)
     public void search() {
         String location = searchEditText.getText().toString();
         if (location != null && !location.equals("")) {
             LatLng coordinationAsLatLng = getCoordinationFromName(location);
             getRoute(coordinationAsLatLng);
         }
+    }
+
+    @OnClick(R.id.cancelButtonOnSearch)
+    public void canceleSearch(){
+        VS.cleanCargoItem();
+        currentRouteMarkerList.clear();
+        mMap.clear();
+        hideSearchEventItems();
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
+        drawTransportationMarkers(currentSelect);
+        mapRefreshable = true;
+        mapOnClickState = MAP_ONCLICK_NULL;
+
     }
 
     @OnClick(R.id.floatingLoginOptionsButton)
@@ -721,7 +738,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             currentRouteMarkerList.clear();
             searchEditText.setHint("Enter start location");
-            searchEditText.setVisibility(View.GONE);
+            searchEditTextWrapper.setVisibility(View.GONE);
             mapOnClickState = MAP_ONCLICK_NULL;
 
         } else {
@@ -776,16 +793,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void showSearchEventItems() {
         floatingActionButtonOpenSearch.setVisibility(View.GONE);
-        floatingActionButtonSearch.setVisibility(View.VISIBLE);
-        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
-        searchEditText.setVisibility(View.VISIBLE);
+        floatingLoginOptionsButton.setVisibility(View.GONE);
+        floatingActionButtonSwitch.setVisibility(View.GONE);
+        searchEditTextWrapper.setVisibility(View.VISIBLE);
     }
 
     public void hideSearchEventItems() {
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
-        floatingActionButtonSearch.setVisibility(View.GONE);
-        floatingLoginOptionsButton.setVisibility(View.GONE);
-        searchEditText.setVisibility(View.GONE);
+        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
+        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
+        searchEditTextWrapper.setVisibility(View.GONE);
     }
 }
 

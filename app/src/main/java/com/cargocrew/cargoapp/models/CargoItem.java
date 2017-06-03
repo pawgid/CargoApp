@@ -14,8 +14,6 @@ import lombok.Setter;
 @Getter
 public class CargoItem extends TransportationItem {
 
-
-
     private double width;
     private double length;
     private double height;
