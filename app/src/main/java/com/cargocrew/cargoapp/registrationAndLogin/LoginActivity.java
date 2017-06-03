@@ -23,9 +23,12 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
+
+
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
     private Button btnSignup, btnLogin, btnReset;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
                                     startActivity(intent);
                                     finish();
+
                                 }
                             }
                         });
