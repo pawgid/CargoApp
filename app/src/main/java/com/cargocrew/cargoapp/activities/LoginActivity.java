@@ -11,10 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cargocrew.cargoapp.R;
@@ -34,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout greyLayout;
 
 
+    private ImageView imgToAnimate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +57,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+
+
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         btnSignup = (Button) findViewById(R.id.btn_signup);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (Button) findViewById(R.id.btn_reset_password);
         progressBarLogin = (ProgressBar) findViewById(R.id.progressBarLogin);
-        greyLayout = (LinearLayout) findViewById(R.id.greyLayout);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -108,7 +116,6 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, "Authentication failed", Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    greyLayout.setVisibility(View.VISIBLE);
                                     progressBarLogin.setVisibility(View.VISIBLE);
                                     Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
                                     startActivity(intent);

@@ -38,5 +38,6 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.firebase:firebase-auth:10.2.4'
     provided "org.projectlombok:lombok:1.12.6"
+    compile 'com.flaviofaria:kenburnsview:1.0.7'
 }
 apply plugin: 'com.google.gms.google-services'
