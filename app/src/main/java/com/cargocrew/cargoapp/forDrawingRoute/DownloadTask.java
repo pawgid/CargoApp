@@ -1,15 +1,9 @@
 package com.cargocrew.cargoapp.forDrawingRoute;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
-import com.cargocrew.cargoapp.MapsActivity;
 import com.cargocrew.cargoapp.R;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,11 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-import static com.cargocrew.cargoapp.MapsActivity.mContext;
-import static com.cargocrew.cargoapp.MapsActivity.mMap;
+import static com.cargocrew.cargoapp.activities.MapsActivity.mContext;
+import static com.cargocrew.cargoapp.activities.MapsActivity.mMap;
 
 /**
  * Created by Miki on 24.05.2017.

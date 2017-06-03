@@ -2,92 +2,107 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="30dp"
     android:layout_weight="1"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/change_email_button"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change e-mail" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/change_password_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change password" />
 
-    <Button
-        android:id="@+id/sending_pass_reset_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Reset password" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/remove_user_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Remove account" />
+            <Button
+                android:id="@+id/change_email_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Change e-mail" />
 
-    <Button
-        android:id="@+id/send"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Send" />
+            <Button
+                android:id="@+id/change_password_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Change password" />
 
-    <Button
-        android:id="@+id/remove"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Remove" />
+            <Button
+                android:id="@+id/sending_pass_reset_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reset password" />
 
-    <Button
-        android:id="@+id/sign_out"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Log out" />
+            <Button
+                android:id="@+id/remove_user_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remove account" />
 
-    <EditText
-        android:id="@+id/old_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Write your e-mail" />
+            <Button
+                android:id="@+id/send"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send" />
 
-    <EditText
-        android:id="@+id/new_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Write your new e-mail" />
+            <Button
+                android:id="@+id/remove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remove" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Write your old password" />
+            <Button
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Log out" />
 
-    <EditText
-        android:id="@+id/newPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Write new password" />
+            <EditText
+                android:id="@+id/old_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Write your e-mail" />
 
-    <Button
-        android:id="@+id/changePass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OK" />
+            <EditText
+                android:id="@+id/new_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Write your new e-mail" />
 
-    <Button
-        android:id="@+id/changeEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OK" />
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Write your old password" />
+
+            <EditText
+                android:id="@+id/newPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Write new password" />
+
+            <Button
+                android:id="@+id/changePass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OK" />
+
+            <Button
+                android:id="@+id/changeEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OK" />
+        </LinearLayout>
+
+    </ScrollView>
+
 </LinearLayout>
