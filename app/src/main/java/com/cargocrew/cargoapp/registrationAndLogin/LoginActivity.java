@@ -1,4 +1,4 @@
-package com.cargocrew.cargoapp.models.registrationAndLogin;
+package com.cargocrew.cargoapp.registrationAndLogin;
 
 /**
  * Created by RENT on 2017-05-30.
@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;

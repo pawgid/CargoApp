@@ -1,4 +1,4 @@
-package com.cargocrew.cargoapp.models.registrationAndLogin;
+package com.cargocrew.cargoapp.registrationAndLogin;
 
 /**
  * Created by RENT on 2017-05-30.
