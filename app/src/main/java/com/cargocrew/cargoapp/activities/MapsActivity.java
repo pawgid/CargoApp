@@ -121,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button truckDetailCancelButton;
 
     @OnClick(R.id.truckDetaiAddButton)
-    public void truckDetaiAddButtonClick() {
+    public void truckDetailAddButtonClick() {
 
         TruckItem truckItem = new TruckItem();
         truckItem.setOrigin(VS.getCargoItem().getOrigin());
