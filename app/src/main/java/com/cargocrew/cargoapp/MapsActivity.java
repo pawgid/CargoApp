@@ -26,7 +26,7 @@ import com.cargocrew.cargoapp.models.CargoItem;
 import com.cargocrew.cargoapp.models.TransportationItem;
 import com.cargocrew.cargoapp.models.TruckItem;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
-import com.cargocrew.cargoapp.registrationAndLogin.MainActivity;
+import com.cargocrew.cargoapp.activities.MainActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

@@ -27,7 +27,7 @@
         android:ems="10"
         android:hint="Enter start location"
         android:inputType="textPersonName"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/truckDetailBar"

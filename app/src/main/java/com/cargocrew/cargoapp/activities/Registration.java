@@ -1,4 +1,4 @@
-package com.cargocrew.cargoapp.registrationAndLogin;
+package com.cargocrew.cargoapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
