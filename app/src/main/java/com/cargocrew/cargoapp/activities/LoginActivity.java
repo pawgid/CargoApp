@@ -10,8 +10,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cargocrew.cargoapp.R;
@@ -25,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
     private Button btnSignup, btnLogin, btnReset;
+
+    private ImageView imgToAnimate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // set the view now
         setContentView(R.layout.activity_login);
+
+
 
 
         inputEmail = (EditText) findViewById(R.id.email);
@@ -107,4 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 }
