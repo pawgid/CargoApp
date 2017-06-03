@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:text="Remove" />
 
+
             <Button
                 android:id="@+id/sign_out"
                 android:layout_width="match_parent"
