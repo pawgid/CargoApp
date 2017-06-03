@@ -84,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean mapRefreshable = true;
     private ValuesSingleton VS = ValuesSingleton.getInstance();
 
-       @BindView(R.id.searchEditText)
+    @BindView(R.id.searchEditText)
     EditText searchEditText;
 
     @BindView(R.id.floatingActionButtonSearch)
@@ -171,12 +171,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public TruckItem bindTruckFromForm(TruckItem truckItem) {
+
         String detailNote = truckDetailDateEditText.getText().toString();
-        truckItem.setNote(detailNote);
+        if (detailNote == null) {
+            truckItem.setNote("");
+        } else {
+            truckItem.setNote(detailNote);
+        }
+
         String phone = truckDetailTelEditText.getText().toString();
-        truckItem.setPhoneNumber(phone);
+        if (phone == null) {
+            truckItem.setPhoneNumber("");
+        } else {
+            truckItem.setPhoneNumber(phone);
+        }
+
         String type = truckDetailTypeEditText.getText().toString();
-        truckItem.setType(type);
+        if (type == null) {
+            truckItem.setType("");
+        } else {
+            truckItem.setType(type);
+        }
         return truckItem;
     }
 
@@ -279,26 +294,73 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
     }
 
+
     public CargoItem bindCargoFromForm(CargoItem cargo) {
         String countryCode = cargoDetailCountryEditText.getText().toString();
-        cargo.setDestCountryCode(countryCode);
-        String note = cargoDetailDestEditText.getText().toString();
-        cargo.setNote(note);
-        Double offer = Double.valueOf(cargoDetailEstimEditText.getText().toString());
-        cargo.setOffer(offer);
-        Double height = Double.valueOf(cargoDetailHeightEditText.getText().toString());
-        cargo.setHeight(height);
-        Double length = Double.valueOf(cargoDetailLengthEditText.getText().toString());
-        cargo.setLength(length);
-        String phone = cargoDetailPhoneNumberEditText.getText().toString();
-        cargo.setPhoneNumber(phone);
-        Double weight = Double.valueOf(cargoDetailWeightEditText.getText().toString());
-        cargo.setWeight(weight);
-        Double width = Double.valueOf(cargoDetailWidthEditText.getText().toString());
-        cargo.setWidth(width);
-        String zipCode = cargoDetailZipCodeEditText.getText().toString();
-        cargo.setDestZipCode(zipCode);
+        if (countryCode == null) {
+            cargo.setDestCountryCode("");
+        } else {
+            cargo.setDestCountryCode(countryCode);
+        }
 
+        String note = cargoDetailDestEditText.getText().toString();
+        if (note == null) {
+            cargo.setNote("");
+        } else {
+            cargo.setNote(note);
+        }
+
+        if (cargoDetailEstimEditText.getText().toString().isEmpty()) {
+            cargo.setOffer(0);
+        } else {
+            Double offer = Double.valueOf(cargoDetailEstimEditText.getText().toString());
+            cargo.setOffer(offer);
+        }
+
+
+        if (cargoDetailHeightEditText.getText().toString().isEmpty()) {
+            cargo.setHeight(0);
+        } else {
+            Double height = Double.valueOf(cargoDetailHeightEditText.getText().toString());
+            cargo.setHeight(height);
+        }
+
+        if (cargoDetailLengthEditText.getText().toString().isEmpty()) {
+            cargo.setLength(0);
+        } else {
+            Double length = Double.valueOf(cargoDetailLengthEditText.getText().toString());
+            cargo.setLength(length);
+        }
+
+        String phone = cargoDetailPhoneNumberEditText.getText().toString();
+        if (phone == null) {
+            cargo.setPhoneNumber("");
+        } else {
+            cargo.setPhoneNumber(phone);
+        }
+
+
+        if (cargoDetailWeightEditText.getText().toString().isEmpty()) {
+            cargo.setWeight(0);
+        } else {
+            Double weight = Double.valueOf(cargoDetailWeightEditText.getText().toString());
+            cargo.setWeight(weight);
+        }
+
+
+        if (cargoDetailWidthEditText.getText().toString().isEmpty()) {
+            cargo.setWidth(0);
+        } else {
+            Double width = Double.valueOf(cargoDetailWidthEditText.getText().toString());
+            cargo.setWidth(width);
+        }
+
+        String zipCode = cargoDetailZipCodeEditText.getText().toString();
+        if (zipCode == null) {
+            cargo.setDestZipCode("");
+        } else {
+            cargo.setDestZipCode(zipCode);
+        }
         return cargo;
     }
 
@@ -312,8 +374,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cargoDetailPhoneNumberTextView.setText(cargo.getPhoneNumber());
         cargoDetailBudgetTextView.setText(String.valueOf(cargo.getOffer()));
     }
-
-
 
 
     @OnClick(R.id.floatingActionButtonOpenSearch)
@@ -349,8 +409,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @OnClick(R.id.floatingLoginOptionsButton)
-    public void floatingLoginOptionsButtonClick()
-    {
+    public void floatingLoginOptionsButtonClick() {
         startActivity(new Intent(MapsActivity.this, MainActivity.class));
     }
 
@@ -479,13 +538,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 markers.add(startMarker);
                 markers.add(destMarker);
 
-                if (markerTransportItem.getClass() == CargoItem.class){
+                if (markerTransportItem.getClass() == CargoItem.class) {
                     cargoDetailBar.setVisibility(View.VISIBLE);
-                    bindViewFromCargo((CargoItem)cargoHashMap.get(selectedMarker));
+                    bindViewFromCargo((CargoItem) cargoHashMap.get(selectedMarker));
                 }
                 if (markerTransportItem.getClass() == TruckItem.class) {
                     truckDetailBar.setVisibility(View.VISIBLE);
-                    bindViewFromTruck((TruckItem)truckHashMap.get(selectedMarker));
+                    bindViewFromTruck((TruckItem) truckHashMap.get(selectedMarker));
                 }
                 cameraPosition = mMap.getCameraPosition();
 
