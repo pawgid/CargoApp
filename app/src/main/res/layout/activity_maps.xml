@@ -59,7 +59,7 @@
 
 
                 <TextView
-                    android:id="@+id/truckTypeTextView"
+                    android:id="@+id/truckDetailTypeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -81,7 +81,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
                 <TextView
-                    android:id="@+id/truckDateTextView"
+                    android:id="@+id/truckDetailDateTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -102,7 +102,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
                 <TextView
-                    android:id="@+id/truckTelTextView"
+                    android:id="@+id/truckDetailTelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -115,7 +115,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/deleteTruck"
+                    android:id="@+id/truckDetaildeleteTruck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="del" />
@@ -137,12 +137,12 @@
         android:visibility="gone">
 
         <EditText
-            android:id="@+id/destEditText"
+            android:id="@+id/cargoDetailDestEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Destination" />
+            android:hint="Destination"
+            android:inputType="textMultiLine" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -150,22 +150,22 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/zipCodeEditText"
+                android:id="@+id/cargoDetailZipCodeEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="15"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="zip-code" />
+                android:hint="zip-code"
+                android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/countryEditText"
+                android:id="@+id/cargoDetailCountryEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="country code" />
+                android:hint="country code"
+                android:inputType="textPersonName" />
         </LinearLayout>
 
         <LinearLayout
@@ -174,41 +174,41 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/lengthEditText"
+                android:id="@+id/cargoDetailLengthEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="length (cm)" />
+                android:hint="length (cm)"
+                android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/widthEditText"
+                android:id="@+id/cargoDetailWidthEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="width (cm)" />
+                android:hint="width (cm)"
+                android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/heightEditText"
+                android:id="@+id/cargoDetailHeightEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
 
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="height (cm)" />
+                android:hint="height (cm)"
+                android:inputType="textPersonName" />
         </LinearLayout>
 
         <EditText
-            android:id="@+id/weightEditText"
+            android:id="@+id/cargoDetailWeightEditText"
             android:layout_width="135dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="weight (kg)" />
+            android:hint="weight (kg)"
+            android:inputType="textPersonName" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -218,28 +218,28 @@
             <EditText
                 android:id="@+id/detailsEditText"
                 android:layout_width="match_parent"
-                android:layout_height="95dp"
+                android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Additional details" />
+                android:hint="Additional details"
+                android:inputType="textMultiLine" />
         </LinearLayout>
 
         <EditText
-            android:id="@+id/phoneNumberEditText"
+            android:id="@+id/cargoDetailPhoneNumberEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.37"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Contact details/Phone number" />
+            android:hint="Contact details/Phone number"
+            android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/estimEditText"
+            android:id="@+id/cargoDetailEstimEditText"
             android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="estimated BUDGET" />
+            android:hint="estimated BUDGET"
+            android:inputType="textPersonName" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -247,14 +247,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/cancelButtonn"
+                android:id="@+id/cargoDetailCancelButtonn"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cancel" />
 
             <Button
-                android:id="@+id/order"
+                android:id="@+id/cargoDetailOrder"
                 android:layout_width="158dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -285,7 +285,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Car Type"
@@ -293,7 +292,7 @@
 
 
                 <EditText
-                    android:id="@+id/truckTypeEditText"
+                    android:id="@+id/truckDetailTypeEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -309,14 +308,13 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Date"
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
                 <EditText
-                    android:id="@+id/truckDateEditText"
+                    android:id="@+id/truckDetailDateEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -330,7 +328,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -338,7 +335,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
                 <EditText
-                    android:id="@+id/truckTelEditText"
+                    android:id="@+id/truckDetailTelEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -351,13 +348,13 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/truckAddButton"
+                    android:id="@+id/truckDetaiAddButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="OK" />
 
                 <Button
-                    android:id="@+id/truckCancelButton"
+                    android:id="@+id/truckDetailCancelButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cancel" />
@@ -378,156 +375,165 @@
         android:visibility="gone">
 
 
+        <TextView
+            android:id="@+id/cargoDetailDeliveryAddressTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="delivery address" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <TextView
-                android:id="@+id/deliveryAddressTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="delivery address" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/lenghtTextView"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:text="lenght" />
-                <TextView
-                    android:id="@+id/widthTextView"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="width" />
-                <TextView
-                    android:id="@+id/heightTextView"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="height" />
-            </LinearLayout>
-            <TextView
-                android:id="@+id/weightTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="weight" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"></LinearLayout>
-            <TextView
-                android:id="@+id/noteTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Additional note" />
-            <TextView
-                android:id="@+id/PhoneNumberTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Contact details" />
-            <TextView
-                android:id="@+id/BudgetTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$$$$" />
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/cargoDetailLenghtTextView"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/deleteCargo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Del" />
-                <RadioButton
-                    android:id="@+id/radioButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="APPROVAL" />
-            </LinearLayout>
+                android:layout_weight="1"
+                android:text="lenght" />
+
+            <TextView
+                android:id="@+id/cargoDetailWidthTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="width" />
+
+            <TextView
+                android:id="@+id/cargoDetailHeightTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="height" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/cargoDetailWeightTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="weight" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"></LinearLayout>
+
+        <TextView
+            android:id="@+id/cargoDetailNoteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Additional note" />
+
+        <TextView
+            android:id="@+id/cargoDetailPhoneNumberTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone number" />
+
+        <TextView
+            android:id="@+id/cargoDetailBudgetTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$$$$" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cargoDetailDeleteCargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Del" />
+
+            <RadioButton
+                android:id="@+id/cargoDetailRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="APPROVAL" />
+        </LinearLayout>
+    </LinearLayout>
 
 
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="50dp"
+        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            android:inputType="textPersonName" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
-<LinearLayout
-android:id="@+id/bottomBar"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_alignParentBottom="true"
-android:layout_margin="50dp"
-android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
-android:orientation="vertical"
-android:visibility="gone">
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="X" />
 
-<EditText
-    android:id="@+id/nameEditText"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="Name"
-    android:inputType="textPersonName" />
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ok" />
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+        </LinearLayout>
 
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/cancelButton"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButtonOpenSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="X" />
+        android:layout_alignEnd="@+id/map"
+        android:layout_marginEnd="35dp"
+        android:layout_marginTop="35dp"
+        android:clickable="true"
+        app:elevation="5dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/plus_circle_outline" />
 
-    <Button
-        android:id="@+id/sendButton"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButtonSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Ok" />
+        android:layout_alignEnd="@+id/map"
+        android:layout_marginEnd="35dp"
+        android:layout_marginTop="35dp"
+        android:clickable="true"
+        android:visibility="gone"
+        app:elevation="5dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/magnify" />
 
-</LinearLayout>
-
-</LinearLayout>
-
-<android.support.design.widget.FloatingActionButton
-android:id="@+id/floatingActionButtonOpenSearch"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_alignEnd="@+id/map"
-android:layout_marginEnd="35dp"
-android:layout_marginTop="35dp"
-android:clickable="true"
-app:elevation="5dp"
-app:fabSize="mini"
-app:srcCompat="@drawable/plus_circle_outline" />
-
-<android.support.design.widget.FloatingActionButton
-android:id="@+id/floatingActionButtonSearch"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_alignEnd="@+id/map"
-android:layout_marginEnd="35dp"
-android:layout_marginTop="35dp"
-android:clickable="true"
-android:visibility="gone"
-app:elevation="5dp"
-app:fabSize="mini"
-app:srcCompat="@drawable/magnify" />
-
-<android.support.design.widget.FloatingActionButton
-android:id="@+id/floatingActionButtonSwitch"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_marginStart="35dp"
-android:layout_marginTop="35dp"
-android:clickable="true"
-app:elevation="5dp"
-app:fabSize="mini"
-app:srcCompat="@drawable/cargo_icon" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButtonSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="35dp"
+        android:clickable="true"
+        app:elevation="5dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/cargo_icon" />
 
 
-    </RelativeLayout>
+</RelativeLayout>
