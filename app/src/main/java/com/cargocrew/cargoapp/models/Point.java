@@ -4,10 +4,14 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by Miki on 27.05.2017.
  */
-
+@Setter
+@Getter
 public class Point implements Serializable {
 
     public double latitude;
@@ -29,4 +33,6 @@ public class Point implements Serializable {
     public LatLng toLatLong(){
         return new LatLng(latitude, longitude);
     }
+
+
 }
