@@ -36,9 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private Button btnSignup, btnLogin, btnReset;
     private ProgressBar progressBarLogin;
-    private LinearLayout greyLayout;
-
-
     private ImageView imgToAnimate;
 
     @Override
