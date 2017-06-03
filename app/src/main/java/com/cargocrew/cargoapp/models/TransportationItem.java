@@ -8,26 +8,20 @@ import lombok.Setter;
 /**
  * Created by Miki on 29.05.2017.
  */
-
+@Setter
+@Getter
 public abstract class TransportationItem implements Serializable {
 
-    @Setter
-    @Getter
+
     private String name;
-    @Setter
-    @Getter
     private int value;
-    @Setter
-    @Getter
     private Point origin;
-    @Setter
-    @Getter
     private Point destination;
-    @Setter
-    @Getter
     private String key;
-    @Setter
-    @Getter
     private String owner;
+    private String phoneNumber;
+    private String destZipCode;
+    private String destCountryCode;
+    private String note;
 
 }
