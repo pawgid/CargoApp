@@ -298,7 +298,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String zipCode = cargoDetailZipCodeEditText.getText().toString();
         cargo.setDestZipCode(zipCode);
 
-        return cargo;
+        return cargo; 
     }
 
     public void bindViewFromCargo(CargoItem cargo) {
