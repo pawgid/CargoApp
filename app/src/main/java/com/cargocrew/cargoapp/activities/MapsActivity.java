@@ -172,6 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         truckDetailBar.setVisibility(View.GONE);
         floatingActionButtonSwitch.setVisibility(View.VISIBLE);
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
+        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
     }
 
     public TruckItem bindTruckFromForm(TruckItem truckItem) {
@@ -296,6 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         truckDetailBar.setVisibility(View.GONE);
         floatingActionButtonSwitch.setVisibility(View.VISIBLE);
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
+        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
     }
 
 
@@ -528,6 +530,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 floatingActionButtonSwitch.setVisibility(View.GONE);
                 floatingActionButtonOpenSearch.setVisibility(View.GONE);
+                floatingLoginOptionsButton.setVisibility(View.GONE);
 
                 selectedMarker = (String) arg0.getTag();
 
