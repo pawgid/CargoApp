@@ -9,43 +9,50 @@
         android:id="@+id/change_email_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change e-mail" />
+        android:text="Change e-mail"
+        android:background="@color/tintedTransparency"/>
 
     <Button
         android:id="@+id/change_password_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change password" />
+        android:text="Change password"
+        android:background="@color/tintedTransparency"/>
 
     <Button
         android:id="@+id/sending_pass_reset_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reset password" />
+        android:text="Reset password"
+        android:background="@color/tintedTransparency"/>
 
     <Button
         android:id="@+id/remove_user_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Remove account" />
+        android:text="Remove account"
+        android:background="@color/tintedTransparency"/>
 
     <Button
         android:id="@+id/send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send" />
+        android:text="Send"
+        android:background="@color/tintedTransparency"/>
 
     <Button
         android:id="@+id/remove"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Remove" />
+        android:text="Remove"
+        android:background="@color/tintedTransparency"/>
 
     <Button
         android:id="@+id/sign_out"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Log out" />
+        android:text="Log out"
+        android:background="@color/tintedTransparency"/>
 
     <EditText
         android:id="@+id/old_email"
@@ -53,7 +60,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Write your e-mail" />
+        android:text="Write your e-mail"/>
 
     <EditText
         android:id="@+id/new_email"
@@ -61,7 +68,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Write your new e-mail" />
+        android:text="Write your new e-mail"/>
 
     <EditText
         android:id="@+id/password"
