@@ -27,8 +27,8 @@
         </activity>
 
         <activity android:name=".activities.MapsActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name=".activities.Registration" android:screenOrientation="portrait"></activity>
-        <activity android:name=".activities.MainActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activities.RegistrationActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activities.LoginOptionsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".activities.ResetPasswordActivity" android:screenOrientation="portrait"></activity>
 
 
