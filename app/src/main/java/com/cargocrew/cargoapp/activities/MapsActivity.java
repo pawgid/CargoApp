@@ -4,14 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.GpsSatellite;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -127,6 +121,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.truckDetailCancelButton)
     Button truckDetailCancelButton;
 
+    private void cleanAddTruckBar() {
+        truckDetailDateEditText.setText("");
+        truckDetailTelEditText.setText("");
+        truckDetailTypeEditText.setText("");
+    }
+
+    @BindView(R.id.truckDetailDateTextViewWrapper)
+    LinearLayout truckDetailDateTextViewWrapper;
+    @BindView(R.id.truckDetailTelTextViewWrpaper)
+    LinearLayout      truckDetailTelTextViewWrapper;
+    @BindView(R.id.truckDetailTypeTextViewWrapper)
+    LinearLayout truckDetailTypeTextViewWrapper;
+
     @BindView(R.id.truckDetailBar)
     LinearLayout truckDetailBar;
     @BindView(R.id.truckDetailDateTextView)
@@ -137,6 +144,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView truckDetailTypeTextView;
     @BindView(R.id.truckDetaildeleteTruck)
     Button truckDetailDeleteTruck;
+
+    private void cleanTruckDetailBar() {
+        truckDetailDateTextView.setText("");
+        truckDetailDateTextViewWrapper.setVisibility(View.VISIBLE);
+        truckDetailTelTextView.setText("");
+        truckDetailTelTextViewWrapper.setVisibility(View.VISIBLE);
+        truckDetailTypeTextView.setText("");
+        truckDetailTypeTextViewWrapper.setVisibility(View.VISIBLE);
+    }
+
 
     @BindView(R.id.addCargoBar)
     LinearLayout addCargoBar;
@@ -165,6 +182,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.cargoDetailOrder)
     Button cargoDetailOrder;
 
+    private void cleanAddCargoBar() {
+        cargoDetailCountryEditText.setText("");
+        cargoDetailDestEditText.setText("");
+        cargoDetailEstimateEditText.setText("");
+        cargoDetailHeightEditText.setText("");
+        cargoDetailLengthEditText.setText("");
+        cargoDetailPhoneNumberEditText.setText("");
+        cargoDetailWeightEditText.setText("");
+        cargoDetailWidthEditText.setText("");
+        cargoDetailZipCodeEditText.setText("");
+        additionalDetailsEditText.setText("");
+
+    }
+
     @BindView(R.id.cargoDetailBar)
     LinearLayout cargoDetailBar;
     @BindView(R.id.cargoDetailDeliveryAddressTextView)
@@ -187,6 +218,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button cargoDetailDeleteCargo;
     @BindView(R.id.cargoDetailRadioButton)
     RadioButton cargoDetailRadioButton;
+
+    private void cleanCargoDetailBar() {
+        cargoDetailDeliveryAddressTextView.setVisibility(View.VISIBLE);
+        cargoDetailLenghtTextView.setVisibility(View.VISIBLE);
+        cargoDetailHeightTextView.setVisibility(View.VISIBLE);
+        cargoDetailWidthTextView.setVisibility(View.VISIBLE);
+        cargoDetailWeightTextView.setVisibility(View.VISIBLE);
+        cargoDetailNoteTextView.setVisibility(View.VISIBLE);
+        cargoDetailPhoneNumberTextView.setVisibility(View.VISIBLE);
+        cargoDetailBudgetTextView.setVisibility(View.VISIBLE);
+    }
+
 
     @OnClick(R.id.truckDetaiAddButton)
     public void truckDetailAddButtonClick() {
@@ -218,6 +261,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapRefreshable = true;
         mapOnClickState = MAP_ONCLICK_NULL;
 
+        cleanAddTruckBar();
         addTruckBar.setVisibility(View.GONE);
     }
 
@@ -233,6 +277,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOnClickState = MARKER_ONCLICK_ZOOM_FORM_DETAIL;
         truckDetailBar.setVisibility(View.GONE);
         showFloatingButtons();
+        cleanTruckDetailBar();
     }
 
     public TruckItem bindTruckFromForm(TruckItem truckItem) {
@@ -245,10 +290,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void bindViewFromTruck(TruckItem truck) {
-        truckDetailDateTextView.setText(truck.getDate());
-        truckDetailTelTextView.setText(truck.getPhoneNumber());
-        truckDetailTypeTextView.setText(truck.getType());
+        if (truck.getDate() != null && !truck.getDate().isEmpty()) {
+            truckDetailDateTextView.setText(truck.getDate());
+        }else {
+            truckDetailDateTextViewWrapper.setVisibility(View.GONE);
+        }
+        if (truck.getPhoneNumber() != null && !truck.getPhoneNumber().isEmpty()) {
+            truckDetailTelTextView.setText(truck.getPhoneNumber());
+        }else {
+            truckDetailTelTextViewWrapper.setVisibility(View.GONE);
+        }
+        if (truck.getType() != null && !truck.getType().isEmpty()) {
+            truckDetailTypeTextView.setText(truck.getType());
+        }else {
+            truckDetailTypeTextViewWrapper.setVisibility(View.GONE);
+        }
     }
+
 
     @OnClick(R.id.cargoDetailOrder)
     public void cargoDetailOrderClick() {
@@ -322,8 +380,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void bindViewFromCargo(CargoItem cargo) {
-
-
 
 
         cargoDetailDeliveryAddressTextView.setText(cargo.getDestStreet() + "\n" + cargo.getDestZipCodeAndCity() + "; " + cargo.getDestCountryCode());
@@ -472,6 +528,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         markerOnClickState = MARKER_ONCLICK_ZOOM_FORM_DETAIL;
                         cargoDetailBar.setVisibility(View.GONE);
                         truckDetailBar.setVisibility(View.GONE);
+                        cleanTruckDetailBar();
+                        cleanCargoDetailBar();
                         showFloatingButtons();
                         break;
                     default:
