@@ -4,6 +4,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.GpsSatellite;
@@ -93,7 +98,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ValuesSingleton VS = ValuesSingleton.getInstance();
     private FirebaseAuth auth;
 
-
     @BindView(R.id.searchEditTextWrapper)
     LinearLayout searchEditTextWrapper;
     @BindView(R.id.searchEditText)
@@ -122,6 +126,67 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button truckDetailAddButton;
     @BindView(R.id.truckDetailCancelButton)
     Button truckDetailCancelButton;
+
+    @BindView(R.id.truckDetailBar)
+    LinearLayout truckDetailBar;
+    @BindView(R.id.truckDetailDateTextView)
+    TextView truckDetailDateTextView;
+    @BindView(R.id.truckDetailTelTextView)
+    TextView truckDetailTelTextView;
+    @BindView(R.id.truckDetailTypeTextView)
+    TextView truckDetailTypeTextView;
+    @BindView(R.id.truckDetaildeleteTruck)
+    Button truckDetailDeleteTruck;
+
+    @BindView(R.id.addCargoBar)
+    LinearLayout addCargoBar;
+    @BindView(R.id.cargoDetailCountryEditText)
+    EditText cargoDetailCountryEditText;
+    @BindView(R.id.cargoDetailDestEditText)
+    EditText cargoDetailDestEditText;
+    @BindView(R.id.cargoDetailEstimEditText)
+    EditText cargoDetailEstimateEditText;
+    @BindView(R.id.cargoDetailHeightEditText)
+    EditText cargoDetailHeightEditText;
+    @BindView(R.id.cargoDetailLengthEditText)
+    EditText cargoDetailLengthEditText;
+    @BindView(R.id.cargoDetailPhoneNumberEditText)
+    EditText cargoDetailPhoneNumberEditText;
+    @BindView(R.id.cargoDetailWeightEditText)
+    EditText cargoDetailWeightEditText;
+    @BindView(R.id.cargoDetailWidthEditText)
+    EditText cargoDetailWidthEditText;
+    @BindView(R.id.cargoDetailZipCodeEditText)
+    EditText cargoDetailZipCodeEditText;
+    @BindView(R.id.additionalDetailsEditText)
+    EditText additionalDetailsEditText;
+    @BindView(R.id.cargoDetailCancelButtonn)
+    Button cargoDetailCancelButton;
+    @BindView(R.id.cargoDetailOrder)
+    Button cargoDetailOrder;
+
+    @BindView(R.id.cargoDetailBar)
+    LinearLayout cargoDetailBar;
+    @BindView(R.id.cargoDetailDeliveryAddressTextView)
+    TextView cargoDetailDeliveryAddressTextView;
+    @BindView(R.id.cargoDetailLenghtTextView)
+    TextView cargoDetailLenghtTextView;
+    @BindView(R.id.cargoDetailHeightTextView)
+    TextView cargoDetailHeightTextView;
+    @BindView(R.id.cargoDetailWidthTextView)
+    TextView cargoDetailWidthTextView;
+    @BindView(R.id.cargoDetailWeightTextView)
+    TextView cargoDetailWeightTextView;
+    @BindView(R.id.cargoDetailNoteTextView)
+    TextView cargoDetailNoteTextView;
+    @BindView(R.id.cargoDetailPhoneNumberTextView)
+    TextView cargoDetailPhoneNumberTextView;
+    @BindView(R.id.cargoDetailBudgetTextView)
+    TextView cargoDetailBudgetTextView;
+    @BindView(R.id.cargoDetailDeleteCargo)
+    Button cargoDetailDeleteCargo;
+    @BindView(R.id.cargoDetailRadioButton)
+    RadioButton cargoDetailRadioButton;
 
     @OnClick(R.id.truckDetaiAddButton)
     public void truckDetailAddButtonClick() {
@@ -156,17 +221,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         addTruckBar.setVisibility(View.GONE);
     }
 
-    @BindView(R.id.truckDetailBar)
-    LinearLayout truckDetailBar;
-    @BindView(R.id.truckDetailDateTextView)
-    TextView truckDetailDateTextView;
-    @BindView(R.id.truckDetailTelTextView)
-    TextView truckDetailTelTextView;
-    @BindView(R.id.truckDetailTypeTextView)
-    TextView truckDetailTypeTextView;
-    @BindView(R.id.truckDetaildeleteTruck)
-    Button truckDetailDeleteTruck;
-
     @OnClick(R.id.truckDetaildeleteTruck)
     public void deleteTruckClick() {
         truckRef.child(selectedMarker).removeValue();
@@ -195,33 +249,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         truckDetailTelTextView.setText(truck.getPhoneNumber());
         truckDetailTypeTextView.setText(truck.getType());
     }
-
-    @BindView(R.id.addCargoBar)
-    LinearLayout addCargoBar;
-    @BindView(R.id.cargoDetailCountryEditText)
-    EditText cargoDetailCountryEditText;
-    @BindView(R.id.cargoDetailDestEditText)
-    EditText cargoDetailDestEditText;
-    @BindView(R.id.cargoDetailEstimEditText)
-    EditText cargoDetailEstimateEditText;
-    @BindView(R.id.cargoDetailHeightEditText)
-    EditText cargoDetailHeightEditText;
-    @BindView(R.id.cargoDetailLengthEditText)
-    EditText cargoDetailLengthEditText;
-    @BindView(R.id.cargoDetailPhoneNumberEditText)
-    EditText cargoDetailPhoneNumberEditText;
-    @BindView(R.id.cargoDetailWeightEditText)
-    EditText cargoDetailWeightEditText;
-    @BindView(R.id.cargoDetailWidthEditText)
-    EditText cargoDetailWidthEditText;
-    @BindView(R.id.cargoDetailZipCodeEditText)
-    EditText cargoDetailZipCodeEditText;
-    @BindView(R.id.additionalDetailsEditText)
-    EditText additionalDetailsEditText;
-    @BindView(R.id.cargoDetailCancelButtonn)
-    Button cargoDetailCancelButton;
-    @BindView(R.id.cargoDetailOrder)
-    Button cargoDetailOrder;
 
     @OnClick(R.id.cargoDetailOrder)
     public void cargoDetailOrderClick() {
@@ -255,29 +282,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         addCargoBar.setVisibility(View.GONE);
     }
-
-    @BindView(R.id.cargoDetailBar)
-    LinearLayout cargoDetailBar;
-    @BindView(R.id.cargoDetailDeliveryAddressTextView)
-    TextView cargoDetailDeliveryAddressTextView;
-    @BindView(R.id.cargoDetailLenghtTextView)
-    TextView cargoDetailLenghtTextView;
-    @BindView(R.id.cargoDetailHeightTextView)
-    TextView cargoDetailHeightTextView;
-    @BindView(R.id.cargoDetailWidthTextView)
-    TextView cargoDetailWidthTextView;
-    @BindView(R.id.cargoDetailWeightTextView)
-    TextView cargoDetailWeightTextView;
-    @BindView(R.id.cargoDetailNoteTextView)
-    TextView cargoDetailNoteTextView;
-    @BindView(R.id.cargoDetailPhoneNumberTextView)
-    TextView cargoDetailPhoneNumberTextView;
-    @BindView(R.id.cargoDetailBudgetTextView)
-    TextView cargoDetailBudgetTextView;
-    @BindView(R.id.cargoDetailDeleteCargo)
-    Button cargoDetailDeleteCargo;
-    @BindView(R.id.cargoDetailRadioButton)
-    RadioButton cargoDetailRadioButton;
 
     @OnClick(R.id.cargoDetailDeleteCargo)
     public void deleteCargoClick() {
@@ -504,10 +508,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         DownloadTask downloadTask = new DownloadTask();
 
                         mapRefreshable = false;
-
                         mMap.clear();
-                        Marker startMarker = mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
-                        Marker destMarker = mMap.addMarker(new MarkerOptions().position(dest).title("Dest"));
+
+                        Marker startMarker = mMap.addMarker(new MarkerOptions()
+                                .position(origin)
+                                .title("Start"));
+                        Marker destMarker = mMap.addMarker(new MarkerOptions()
+                                .position(dest)
+                                .title("Dest"));
                         downloadTask.execute(url);
 
                         ArrayList<Marker> markers = new ArrayList<>();

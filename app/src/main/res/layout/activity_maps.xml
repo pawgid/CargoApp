@@ -159,7 +159,7 @@
         android:layout_margin="20dp"
         android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
