@@ -129,8 +129,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @BindView(R.id.truckDetailDateTextViewWrapper)
     LinearLayout truckDetailDateTextViewWrapper;
-    @BindView(R.id.truckDetailTelTextViewWrpaper)
-    LinearLayout      truckDetailTelTextViewWrapper;
+    @BindView(R.id.truckDetailTelTextViewWrapper)
+    LinearLayout truckDetailTelTextViewWrapper;
     @BindView(R.id.truckDetailTypeTextViewWrapper)
     LinearLayout truckDetailTypeTextViewWrapper;
 
@@ -292,17 +292,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void bindViewFromTruck(TruckItem truck) {
         if (truck.getDate() != null && !truck.getDate().isEmpty()) {
             truckDetailDateTextView.setText(truck.getDate());
-        }else {
+        } else {
             truckDetailDateTextViewWrapper.setVisibility(View.GONE);
         }
         if (truck.getPhoneNumber() != null && !truck.getPhoneNumber().isEmpty()) {
             truckDetailTelTextView.setText(truck.getPhoneNumber());
-        }else {
+        } else {
             truckDetailTelTextViewWrapper.setVisibility(View.GONE);
         }
         if (truck.getType() != null && !truck.getType().isEmpty()) {
             truckDetailTypeTextView.setText(truck.getType());
-        }else {
+        } else {
             truckDetailTypeTextViewWrapper.setVisibility(View.GONE);
         }
     }
