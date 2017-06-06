@@ -14,14 +14,14 @@ public abstract class TransportationItem implements Serializable {
 
 
     private String name;
-    private int value;
     private Point origin;
     private Point destination;
     private String key;
     private String owner;
     private String phoneNumber;
-    private String destZipCode;
+    private String destZipCodeAndCity;
     private String destCountryCode;
-    private String note;
+    private String destStreet;
+    private String addidtionalInfo;
 
 }

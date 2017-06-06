@@ -35,11 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
     private Button btnSignup, btnLogin, btnReset;
-    private ProgressBar progressBarLogin;
-    private LinearLayout greyLayout;
+    private LinearLayout progressBarLogin;
 
-
-    private ImageView imgToAnimate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         btnSignup = (Button) findViewById(R.id.btn_signup);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (Button) findViewById(R.id.btn_reset_password);
-        progressBarLogin = (ProgressBar) findViewById(R.id.progressBarLogin);
+        progressBarLogin = (LinearLayout) findViewById(R.id.progressBarLogin);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
