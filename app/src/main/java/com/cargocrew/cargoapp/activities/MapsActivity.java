@@ -335,7 +335,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.floatingLoginOptionsButton)
     public void floatingLoginOptionsButtonClick() {
-        startActivity(new Intent(MapsActivity.this, MainActivity.class));
+        startActivity(new Intent(MapsActivity.this, LoginOptionsActivity.class));
     }
 
     @OnClick(R.id.ButtonSearch)
@@ -349,11 +349,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.cancelButtonOnSearch)
     public void cancelSearch() {
-
         mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
         backToMainMapView();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
