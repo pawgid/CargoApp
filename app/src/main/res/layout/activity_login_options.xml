@@ -41,16 +41,11 @@
                 android:text="Remove account" />
 
             <Button
-                android:id="@+id/send"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Send" />
-
-            <Button
                 android:id="@+id/remove"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remove" />
+                android:text="Remove"
+                android:visibility="gone" />
 
 
             <Button
@@ -65,7 +60,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Write your e-mail" />
+                android:text="Write your e-mail"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/new_email"
@@ -73,7 +69,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Write your new e-mail" />
+                android:text="Write your new e-mail"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/password"
@@ -81,7 +78,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Write your old password" />
+                android:text="Write your old password"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/newPassword"
@@ -89,19 +87,29 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Write new password" />
+                android:text="Write new password"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/changePass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OK" />
+                android:text="OK"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/changeEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OK" />
+                android:text="OK"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/send"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:visibility="gone" />
         </LinearLayout>
 
     </ScrollView>

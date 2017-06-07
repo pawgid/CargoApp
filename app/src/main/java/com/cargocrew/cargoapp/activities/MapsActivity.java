@@ -55,7 +55,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.cargocrew.cargoapp.R.id.floatingActionButtonSwitch;
 import static com.cargocrew.cargoapp.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -432,7 +431,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.floatingLoginOptionsButton)
     public void floatingLoginOptionsButtonClick() {
-        startActivity(new Intent(MapsActivity.this, MainActivity.class));
+        startActivity(new Intent(MapsActivity.this, LoginOptionsActivity.class));
     }
 
 
