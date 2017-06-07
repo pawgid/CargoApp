@@ -5,7 +5,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 
 import com.cargocrew.cargoapp.R;
-import com.cargocrew.cargoapp.models.ValuesSingleton;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -30,18 +29,13 @@ import static com.cargocrew.cargoapp.activities.MapsActivity.mMap;
  * Created by Miki on 24.05.2017.
  */
 
-// Fetches data from url passed
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
-    // Downloading data in non-ui thread
     @Override
     protected String doInBackground(String... url) {
 
-        // For storing data from web service
         String data = "";
-
         try {
-            // Fetching the data from web service
             data = downloadUrl(url[0]);
         } catch (Exception e) {
             Log.d("Background Task", e.toString());
@@ -49,15 +43,10 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
         return data;
     }
 
-    // Executes in UI thread, after the execution of
-    // doInBackground()
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-
         ParserTask parserTask = new ParserTask();
-
-        // Invokes the thread for parsing the JSON data
         parserTask.execute(result);
     }
 
@@ -67,29 +56,17 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(strUrl);
-
-            // Creating an http connection to communicate with url
             urlConnection = (HttpURLConnection) url.openConnection();
-
-            // Connecting to url
             urlConnection.connect();
-
-            // Reading data from url
             iStream = urlConnection.getInputStream();
-
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
             StringBuffer sb = new StringBuffer();
-
             String line = "";
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-
             data = sb.toString();
-
             br.close();
-
         } catch (Exception e) {
             Log.d("E while downloading url", e.toString());
         } finally {
@@ -102,8 +79,6 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
      * A class to parse the Google Places in JSON format
      */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-
-        // Parsing the data in non-ui thread
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 
@@ -114,29 +89,24 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
                 jObject = new JSONObject(jsonData[0]);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
-                // Starts parsing data
                 routes = parser.parse(jObject);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return routes;
         }
-        // Executes in UI thread, after the parsing process
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
 
-            // Traversing through all the routes
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
                 lineOptions = new PolylineOptions();
 
-                // Fetching i-th route
                 List<HashMap<String, String>> path = result.get(i);
 
-                // Fetching all the points in i-th route
                 for (int j = 0; j < path.size(); j++) {
                     HashMap<String, String> point = path.get(j);
 
@@ -147,18 +117,14 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
                     points.add(position);
                 }
 
-                // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(8);
                 int color = ResourcesCompat.getColor(mContext.getResources(), R.color.colorPrimary, null);
                 lineOptions.color(color);
             }
 
-            // Drawing polyline in the Google Map for the i-th route
             try {
                 Polyline polyline = mMap.addPolyline(lineOptions);
-                ValuesSingleton valuesSingleton = ValuesSingleton.getInstance();
-
             }catch (NullPointerException e)
             {
                 e.printStackTrace();

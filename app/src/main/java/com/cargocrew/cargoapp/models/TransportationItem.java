@@ -22,6 +22,6 @@ public abstract class TransportationItem implements Serializable {
     private String destZipCodeAndCity;
     private String destCountryCode;
     private String destStreet;
-    private String addidtionalInfo;
+    private String addidtionInfo;
 
 }
