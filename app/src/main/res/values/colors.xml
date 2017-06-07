@@ -5,4 +5,10 @@
     <color name="colorAccent">#FF4081</color>
     <color name="tintedTransparency">#c7dfd8db</color>
     <color name="colorGrey">#ba7c7779</color>
+    <color name="transparent">#007c7779</color>
+
+    <color name="light_font">#FBFBFB</color>
+    <color name="dark_font">#000000</color>
+    <color name="text_shadow">#7F000000</color>
+    <color name="text_shadow_white">#FFFFFF</color>
 </resources>

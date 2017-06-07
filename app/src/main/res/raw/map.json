@@ -117,6 +117,15 @@
   },
   {
     "featureType": "administrative.locality",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "simplified"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
     "elementType": "labels.text.fill",
     "stylers": [
       {
