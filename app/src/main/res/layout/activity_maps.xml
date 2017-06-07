@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
@@ -64,11 +63,13 @@
 
 
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/truckDetailTypeTextViewWrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -77,6 +78,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
                     android:text="Car Type"
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
@@ -92,6 +94,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/truckDetailDateTextViewWrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -100,6 +103,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
                     android:text="Date"
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
@@ -112,6 +116,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/truckDetailTelTextViewWrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -120,6 +125,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
                     android:layout_weight="1"
                     android:text="Tel."
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
@@ -159,36 +165,56 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <EditText
-            android:id="@+id/cargoDetailDestEditText"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Destination"
-            android:inputType="textMultiLine" />
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/cargoDetailDestEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Addres"
+                android:inputType="textMultiLine" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/cargoDetailZipCodeEditText"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="15"
-                android:ems="10"
-                android:hint="zip-code"
-                android:inputType="textPersonName" />
+                android:layout_weight="15">
 
-            <EditText
-                android:id="@+id/cargoDetailCountryEditText"
+
+                <EditText
+                    android:id="@+id/cargoDetailZipCodeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Zip-code and City"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="10"
-                android:ems="10"
-                android:hint="country code"
-                android:inputType="textPersonName" />
+                android:layout_weight="5">
+
+                <EditText
+                    android:id="@+id/cargoDetailCountryEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Country"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -196,34 +222,53 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/cargoDetailLengthEditText"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="length (cm)"
-                android:inputType="textPersonName" />
+                android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/cargoDetailWidthEditText"
+                <EditText
+                    android:id="@+id/cargoDetailLengthEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="length (cm)"
+                    android:inputType="number" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="width (cm)"
-                android:inputType="textPersonName" />
+                android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/cargoDetailHeightEditText"
+                <EditText
+                    android:id="@+id/cargoDetailWidthEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="width (cm)"
+                    android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="height (cm)"
-                android:inputType="textPersonName" />
+                <EditText
+                    android:id="@+id/cargoDetailHeightEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="height (cm)"
+                    android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/cargoDetailWeightEditText"
@@ -231,21 +276,29 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="weight (kg)"
-            android:inputType="textPersonName" />
+            android:inputType="number" />
 
-        <LinearLayout
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
+
 
             <EditText
-                android:id="@+id/detailsEditText"
+                android:id="@+id/additionalDetailsEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Additional details"
-                android:inputType="textMultiLine" />
-        </LinearLayout>
+                android:inputType="text" />
+
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/cargoDetailPhoneNumberEditText"
@@ -254,15 +307,23 @@
             android:layout_weight="0.37"
             android:ems="10"
             android:hint="Contact details/Phone number"
-            android:inputType="textPersonName" />
+            android:inputType="phone" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/cargoDetailEstimEditText"
             android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="estimated BUDGET"
-            android:inputType="textPersonName" />
+            android:hint="Your offer [EUR]"
+            android:inputType="number" />
+
+    </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -305,11 +366,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
                     android:text="Car Type"
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
@@ -333,6 +396,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
                     android:text="Date"
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
@@ -353,6 +417,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
                     android:layout_weight="1"
                     android:text="Tel."
                     android:textAppearance="@style/TextAppearance.AppCompat.Button" />

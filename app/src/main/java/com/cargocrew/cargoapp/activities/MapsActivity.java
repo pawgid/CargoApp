@@ -24,6 +24,7 @@ import com.cargocrew.cargoapp.R;
 import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
 import com.cargocrew.cargoapp.forDrawingRoute.Services;
 import com.cargocrew.cargoapp.models.CargoItem;
+import com.cargocrew.cargoapp.models.Point;
 import com.cargocrew.cargoapp.models.TransportationItem;
 import com.cargocrew.cargoapp.models.TruckItem;
 import com.cargocrew.cargoapp.models.ValuesSingleton;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -62,16 +64,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int REQUEST_ACCESS_FINE_LOCATION = 1001;
 
     public static Context mContext;
-
     public static GoogleMap mMap;
 
     private final int MAP_ONCLICK_NULL = 100;
     private final int MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL = 101;
     private final int MAP_ONCLICK_ADD_MARKER = 102;
 
+    private final int MARKER_ONCLICK_NULL = 200;
+    private final int MARKER_ONCLICK_ZOOM_FORM_DETAIL = 201;
+
     private int mapOnClickState = MAP_ONCLICK_NULL;
+    private int markerOnClickState = MARKER_ONCLICK_ZOOM_FORM_DETAIL;
+
 
     private List<Marker> currentRouteMarkerList = new ArrayList<>();
+
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference cargoRef = database.getInstance().getReference("Cargo");
     private DatabaseReference truckRef = database.getInstance().getReference("Truck");
@@ -83,28 +90,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String selectedMarker = null;
     private CameraPosition cameraPosition = null;
     public boolean mapRefreshable = true;
-    private ValuesSingleton VS = ValuesSingleton.getInstance();
+//    private ValuesSingleton VS = ValuesSingleton.getInstance();
     private FirebaseAuth auth;
-
 
     @BindView(R.id.searchEditTextWrapper)
     LinearLayout searchEditTextWrapper;
-
     @BindView(R.id.searchEditText)
     EditText searchEditText;
-
     @BindView(R.id.ButtonSearch)
     Button ButtonSearch;
+    @BindView(R.id.cancelButtonOnSearch)
+    Button cancelButtonOnSearch;
 
     @BindView(R.id.floatingActionButtonOpenSearch)
     FloatingActionButton floatingActionButtonOpenSearch;
-
     @BindView(R.id.floatingActionButtonSwitch)
     FloatingActionButton floatingActionButtonSwitch;
-
     @BindView(R.id.floatingLoginOptionsButton)
     FloatingActionButton floatingLoginOptionsButton;
-
 
     @BindView(R.id.addTruckBar)
     LinearLayout addTruckBar;
@@ -115,40 +118,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.truckDetailTypeEditText)
     EditText truckDetailTypeEditText;
     @BindView(R.id.truckDetaiAddButton)
-    Button truckDetaiAddButton;
+    Button truckDetailAddButton;
     @BindView(R.id.truckDetailCancelButton)
     Button truckDetailCancelButton;
 
-    @OnClick(R.id.truckDetaiAddButton)
-    public void truckDetailAddButtonClick() {
-
-        TruckItem truckItem = new TruckItem();
-        truckItem.setOrigin(VS.getCargoItem().getOrigin());
-        truckItem.setDestination(VS.getCargoItem().getDestination());
-        truckItem = bindTruckFromForm(truckItem);
-        String key = cargoRef.push().getKey();
-        truckRef.child(key).setValue(truckItem);
-
-        mMap.clear();
-        hideSearchEventItems();
-        drawTransportationMarkers(currentSelect);
-        mapRefreshable = true;
-        addTruckBar.setVisibility(View.GONE);
-    }
-
-    @OnClick(R.id.truckDetailCancelButton)
-    public void truckDetailCancelButtonClick() {
-        VS.cleanCargoItem();
-        currentRouteMarkerList.clear();
-        mMap.clear();
-        hideSearchEventItems();
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
-        drawTransportationMarkers(currentSelect);
-        mapRefreshable = true;
-        mapOnClickState = MAP_ONCLICK_NULL;
-
-        addTruckBar.setVisibility(View.GONE);
-    }
+    @BindView(R.id.truckDetailDateTextViewWrapper)
+    LinearLayout truckDetailDateTextViewWrapper;
+    @BindView(R.id.truckDetailTelTextViewWrapper)
+    LinearLayout truckDetailTelTextViewWrapper;
+    @BindView(R.id.truckDetailTypeTextViewWrapper)
+    LinearLayout truckDetailTypeTextViewWrapper;
 
     @BindView(R.id.truckDetailBar)
     LinearLayout truckDetailBar;
@@ -159,54 +138,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.truckDetailTypeTextView)
     TextView truckDetailTypeTextView;
     @BindView(R.id.truckDetaildeleteTruck)
-    Button truckDetaildeleteTruck;
-
-    @OnClick(R.id.truckDetaildeleteTruck)
-    public void deleteTruckClick() {
-        truckRef.child(selectedMarker).removeValue();
-
-        mMap.clear();
-        mapRefreshable = true;
-        drawTransportationMarkers(currentSelect);
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        mapOnClickState = MAP_ONCLICK_NULL;
-        cargoDetailBar.setVisibility(View.GONE);
-        truckDetailBar.setVisibility(View.GONE);
-        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
-        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
-        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
-    }
-
-    public TruckItem bindTruckFromForm(TruckItem truckItem) {
-
-        String detailNote = truckDetailDateEditText.getText().toString();
-        if (detailNote == null) {
-            truckItem.setNote("");
-        } else {
-            truckItem.setNote(detailNote);
-        }
-
-        String phone = truckDetailTelEditText.getText().toString();
-        if (phone == null) {
-            truckItem.setPhoneNumber("");
-        } else {
-            truckItem.setPhoneNumber(phone);
-        }
-
-        String type = truckDetailTypeEditText.getText().toString();
-        if (type == null) {
-            truckItem.setType("");
-        } else {
-            truckItem.setType(type);
-        }
-        return truckItem;
-    }
-
-    public void bindViewFromTruck(TruckItem truck) {
-        truckDetailDateTextView.setText(truck.getDate());
-        truckDetailTelTextView.setText(truck.getPhoneNumber());
-        truckDetailTypeTextView.setText(truck.getType());
-    }
+    Button truckDetailDeleteTruck;
 
     @BindView(R.id.addCargoBar)
     LinearLayout addCargoBar;
@@ -215,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.cargoDetailDestEditText)
     EditText cargoDetailDestEditText;
     @BindView(R.id.cargoDetailEstimEditText)
-    EditText cargoDetailEstimEditText;
+    EditText cargoDetailEstimateEditText;
     @BindView(R.id.cargoDetailHeightEditText)
     EditText cargoDetailHeightEditText;
     @BindView(R.id.cargoDetailLengthEditText)
@@ -228,40 +160,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     EditText cargoDetailWidthEditText;
     @BindView(R.id.cargoDetailZipCodeEditText)
     EditText cargoDetailZipCodeEditText;
+    @BindView(R.id.additionalDetailsEditText)
+    EditText additionalDetailsEditText;
     @BindView(R.id.cargoDetailCancelButtonn)
-    Button cargoDetailCancelButtonn;
+    Button cargoDetailCancelButton;
     @BindView(R.id.cargoDetailOrder)
     Button cargoDetailOrder;
-
-    @OnClick(R.id.cargoDetailOrder)
-    public void cargoDetailOrderClick() {
-        CargoItem cargoItem = new CargoItem();
-        cargoItem.setOrigin(VS.getCargoItem().getOrigin());
-        cargoItem.setDestination(VS.getCargoItem().getDestination());
-        cargoItem = bindCargoFromForm(cargoItem);
-        String key = truckRef.push().getKey();
-        cargoRef.child(key).setValue(cargoItem);
-
-        mMap.clear();
-        hideSearchEventItems();
-        drawTransportationMarkers(currentSelect);
-        mapRefreshable = true;
-        addCargoBar.setVisibility(View.GONE);
-    }
-
-    @OnClick(R.id.cargoDetailCancelButtonn)
-    public void cargoDetailCancelButtonnClick() {
-        VS.cleanCargoItem();
-        currentRouteMarkerList.clear();
-        mMap.clear();
-        hideSearchEventItems();
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
-        drawTransportationMarkers(currentSelect);
-        mapRefreshable = true;
-        mapOnClickState = MAP_ONCLICK_NULL;
-
-        addCargoBar.setVisibility(View.GONE);
-    }
 
     @BindView(R.id.cargoDetailBar)
     LinearLayout cargoDetailBar;
@@ -286,108 +190,133 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.cargoDetailRadioButton)
     RadioButton cargoDetailRadioButton;
 
+
+    @OnClick(R.id.truckDetaiAddButton)
+    public void truckDetailAddButtonClick() {
+
+        TruckItem truckItem = new TruckItem();
+        truckItem.setOrigin(new Point(currentRouteMarkerList.get(0).getPosition()));
+        truckItem.setDestination(new Point(currentRouteMarkerList.get(1).getPosition()));
+        truckItem = bindTruckFromForm(truckItem);
+        String key = cargoRef.push().getKey();
+        truckRef.child(key).setValue(truckItem);
+
+        backToMainMapView();
+    }
+
+    @OnClick(R.id.truckDetailCancelButton)
+    public void truckDetailCancelButtonClick() {
+
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
+        backToMainMapView();
+    }
+
+    @OnClick(R.id.truckDetaildeleteTruck)
+    public void deleteTruckClick() {
+        truckRef.child(selectedMarker).removeValue();
+
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        backToMainMapView();
+    }
+
+    public TruckItem bindTruckFromForm(TruckItem truckItem) {
+
+        truckItem.setDestStreet(truckDetailDateEditText.getText().toString());
+        truckItem.setPhoneNumber(truckDetailTelEditText.getText().toString());
+        truckItem.setType(truckDetailTypeEditText.getText().toString());
+
+        return truckItem;
+    }
+
+    public void bindViewFromTruck(TruckItem truck) {
+        if (truck.getDate() != null && !truck.getDate().isEmpty()) {
+            truckDetailDateTextView.setText(truck.getDate());
+        } else {
+            truckDetailDateTextViewWrapper.setVisibility(View.GONE);
+        }
+        if (truck.getPhoneNumber() != null && !truck.getPhoneNumber().isEmpty()) {
+            truckDetailTelTextView.setText(truck.getPhoneNumber());
+        } else {
+            truckDetailTelTextViewWrapper.setVisibility(View.GONE);
+        }
+        if (truck.getType() != null && !truck.getType().isEmpty()) {
+            truckDetailTypeTextView.setText(truck.getType());
+        } else {
+            truckDetailTypeTextViewWrapper.setVisibility(View.GONE);
+        }
+    }
+
+
+    @OnClick(R.id.cargoDetailOrder)
+    public void cargoDetailOrderClick() {
+        CargoItem cargoItem = new CargoItem();
+        cargoItem.setOrigin(new Point(currentRouteMarkerList.get(0).getPosition()));
+        cargoItem.setDestination(new Point(currentRouteMarkerList.get(1).getPosition()));
+        cargoItem = bindCargoFromForm(cargoItem);
+        String key = truckRef.push().getKey();
+        cargoRef.child(key).setValue(cargoItem);
+
+        backToMainMapView();
+    }
+
+    @OnClick(R.id.cargoDetailCancelButtonn)
+    public void cargoDetailCancelButtonClick() {
+
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
+        backToMainMapView();
+    }
+
     @OnClick(R.id.cargoDetailDeleteCargo)
     public void deleteCargoClick() {
         cargoRef.child(selectedMarker).removeValue();
-
-        mMap.clear();
-        mapRefreshable = true;
-        drawTransportationMarkers(currentSelect);
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        mapOnClickState = MAP_ONCLICK_NULL;
-        cargoDetailBar.setVisibility(View.GONE);
-        truckDetailBar.setVisibility(View.GONE);
-        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
-        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
-        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
+        backToMainMapView();
     }
 
 
     public CargoItem bindCargoFromForm(CargoItem cargo) {
-        String countryCode = cargoDetailCountryEditText.getText().toString();
-        if (countryCode == null) {
-            cargo.setDestCountryCode("");
-        } else {
-            cargo.setDestCountryCode(countryCode);
-        }
 
-        String note = cargoDetailDestEditText.getText().toString();
-        if (note == null) {
-            cargo.setNote("");
-        } else {
-            cargo.setNote(note);
-        }
+        cargo.setDestCountryCode(cargoDetailCountryEditText.getText().toString());
+        cargo.setDestStreet(cargoDetailDestEditText.getText().toString());
+        cargo.setDestZipCodeAndCity(cargoDetailZipCodeEditText.getText().toString());
+        cargo.setPhoneNumber(cargoDetailPhoneNumberEditText.getText().toString());
+        cargo.setAddidtionalInfo(additionalDetailsEditText.getText().toString());
 
-        if (cargoDetailEstimEditText.getText().toString().isEmpty()) {
-            cargo.setOffer(0);
-        } else {
-            Double offer = Double.valueOf(cargoDetailEstimEditText.getText().toString());
-            cargo.setOffer(offer);
-        }
+        cargo.setOffer(zeroIfEditTextIsEmpty(cargoDetailEstimateEditText));
+        cargo.setHeight(zeroIfEditTextIsEmpty(cargoDetailHeightEditText));
+        cargo.setLength(zeroIfEditTextIsEmpty(cargoDetailLengthEditText));
+        cargo.setWeight(zeroIfEditTextIsEmpty(cargoDetailWeightEditText));
+        cargo.setWidth(zeroIfEditTextIsEmpty(cargoDetailWidthEditText));
 
-
-        if (cargoDetailHeightEditText.getText().toString().isEmpty()) {
-            cargo.setHeight(0);
-        } else {
-            Double height = Double.valueOf(cargoDetailHeightEditText.getText().toString());
-            cargo.setHeight(height);
-        }
-
-        if (cargoDetailLengthEditText.getText().toString().isEmpty()) {
-            cargo.setLength(0);
-        } else {
-            Double length = Double.valueOf(cargoDetailLengthEditText.getText().toString());
-            cargo.setLength(length);
-        }
-
-        String phone = cargoDetailPhoneNumberEditText.getText().toString();
-        if (phone == null) {
-            cargo.setPhoneNumber("");
-        } else {
-            cargo.setPhoneNumber(phone);
-        }
-
-
-        if (cargoDetailWeightEditText.getText().toString().isEmpty()) {
-            cargo.setWeight(0);
-        } else {
-            Double weight = Double.valueOf(cargoDetailWeightEditText.getText().toString());
-            cargo.setWeight(weight);
-        }
-
-
-        if (cargoDetailWidthEditText.getText().toString().isEmpty()) {
-            cargo.setWidth(0);
-        } else {
-            Double width = Double.valueOf(cargoDetailWidthEditText.getText().toString());
-            cargo.setWidth(width);
-        }
-
-        String zipCode = cargoDetailZipCodeEditText.getText().toString();
-        if (zipCode == null) {
-            cargo.setDestZipCode("");
-        } else {
-            cargo.setDestZipCode(zipCode);
-        }
         return cargo;
     }
 
+    private Double zeroIfEditTextIsEmpty(EditText field) {
+        if (field.getText().toString().isEmpty()) {
+            return 0.0;
+        }
+        return Double.valueOf(field.getText().toString());
+    }
+
     public void bindViewFromCargo(CargoItem cargo) {
-        cargoDetailDeliveryAddressTextView.setText(cargo.getDestCountryCode() + " " + cargo.getDestZipCode());
-        cargoDetailLenghtTextView.setText(String.valueOf(cargo.getLength()));
-        cargoDetailHeightTextView.setText(String.valueOf(cargo.getHeight()));
-        cargoDetailWidthTextView.setText(String.valueOf(cargo.getWidth()));
-        cargoDetailWeightTextView.setText(String.valueOf(cargo.getWeight()));
-        cargoDetailNoteTextView.setText(cargo.getNote());
-        cargoDetailPhoneNumberTextView.setText(cargo.getPhoneNumber());
-        cargoDetailBudgetTextView.setText(String.valueOf(cargo.getOffer()));
+
+
+        cargoDetailDeliveryAddressTextView.setText(cargo.getDestStreet() + "\n" + cargo.getDestZipCodeAndCity() + "; " + cargo.getDestCountryCode());
+        cargoDetailDeliveryAddressTextView.setText(cargo.getDestStreet() + "\n" + cargo.getDestZipCodeAndCity() + "; " + cargo.getDestCountryCode());
+        cargoDetailLenghtTextView.setText("L: " + String.valueOf(cargo.getLength()) + " cm");
+        cargoDetailHeightTextView.setText("H: " + String.valueOf(cargo.getHeight()) + " cm");
+        cargoDetailWidthTextView.setText("L: " + String.valueOf(cargo.getWidth()) + " cm");
+        cargoDetailWeightTextView.setText("Weight: " + String.valueOf(cargo.getWeight()) + " kg");
+        cargoDetailNoteTextView.setText(cargo.getAddidtionalInfo());
+        cargoDetailPhoneNumberTextView.setText("Contact number: " + cargo.getPhoneNumber());
+        cargoDetailBudgetTextView.setText("Offer: " + String.valueOf(cargo.getOffer()));
     }
 
 
     @OnClick(R.id.floatingActionButtonOpenSearch)
     public void floatingActionButtonOpenSearchClick() {
         mMap.clear();
-        showSearchEventItems();
+        hideFloatingButtons();
+        searchEditTextWrapper.setVisibility(View.VISIBLE);
         mapOnClickState = MAP_ONCLICK_ADD_MARKER;
     }
 
@@ -400,12 +329,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currentSelect = cargoHashMap;
             floatingActionButtonSwitch.setImageDrawable(getResources().getDrawable(R.drawable.cargo_icon));
         }
-
-        hideSearchEventItems();
         mMap.clear();
         drawTransportationMarkers(currentSelect);
     }
 
+    @OnClick(R.id.floatingLoginOptionsButton)
+    public void floatingLoginOptionsButtonClick() {
+        startActivity(new Intent(MapsActivity.this, LoginOptionsActivity.class));
+    }
 
     @OnClick(R.id.ButtonSearch)
     public void search() {
@@ -417,36 +348,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @OnClick(R.id.cancelButtonOnSearch)
-    public void canceleSearch(){
-        VS.cleanCargoItem();
-        currentRouteMarkerList.clear();
-        mMap.clear();
-        hideSearchEventItems();
+    public void cancelSearch() {
         mMap.animateCamera(CameraUpdateFactory.zoomTo(5f));
-        drawTransportationMarkers(currentSelect);
-        mapRefreshable = true;
-        mapOnClickState = MAP_ONCLICK_NULL;
-
+        backToMainMapView();
     }
-
-    @OnClick(R.id.floatingLoginOptionsButton)
-    public void floatingLoginOptionsButtonClick() {
-        startActivity(new Intent(MapsActivity.this, LoginOptionsActivity.class));
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
-        auth = FirebaseAuth.getInstance();
-        String uid = auth.getCurrentUser().getUid();
-        Toast.makeText(MapsActivity.this, uid, Toast.LENGTH_SHORT).show();
+
+//        auth = FirebaseAuth.getInstance();
+//        String uid = auth.getCurrentUser().getUid();
 
         currentSelect = cargoHashMap;
 
-        if (!haveLocationPermission()) return;
+        haveLocationPermission();
 
         setUpMap();
         dataBaseSetup();
@@ -476,6 +394,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setUpMap() {
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(map);
         mapFragment.getMapAsync(this);
@@ -486,11 +405,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mContext = getBaseContext();
         mMap = googleMap;
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map));
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         LatLng polandCenter = new LatLng(52.069381, 19.480334);
         cameraPosition = CameraPosition.builder().zoom(5.4f).target(polandCenter).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map));
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -505,21 +424,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 switch (mapOnClickState) {
                     case MAP_ONCLICK_ADD_MARKER:
-                        showSearchEventItems();
                         getRoute(latLng);
 
                         break;
                     case MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL:
-                        mMap.clear();
-                        mapRefreshable = true;
-                        drawTransportationMarkers(currentSelect);
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        mapOnClickState = MAP_ONCLICK_NULL;
-                        cargoDetailBar.setVisibility(View.GONE);
-                        truckDetailBar.setVisibility(View.GONE);
-                        floatingActionButtonSwitch.setVisibility(View.VISIBLE);
-                        floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
-                        floatingLoginOptionsButton.setVisibility(View.VISIBLE);
+                        backToMainMapView();
                         break;
                     default:
                         break;
@@ -531,51 +441,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public boolean onMarkerClick(Marker arg0) {
-                Toast.makeText(MapsActivity.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
 
-                floatingActionButtonSwitch.setVisibility(View.GONE);
-                floatingActionButtonOpenSearch.setVisibility(View.GONE);
-                floatingLoginOptionsButton.setVisibility(View.GONE);
+                switch (markerOnClickState) {
+                    case MARKER_ONCLICK_ZOOM_FORM_DETAIL:
 
-                selectedMarker = (String) arg0.getTag();
+                        markerOnClickState = MARKER_ONCLICK_NULL;
+                        hideFloatingButtons();
 
-                TransportationItem markerTransportItem = null;
-                if (cargoHashMap.containsKey(selectedMarker))
-                    markerTransportItem = cargoHashMap.get(selectedMarker);
-                if (truckHashMap.containsKey(selectedMarker))
-                    markerTransportItem = truckHashMap.get(selectedMarker);
+                        selectedMarker = (String) arg0.getTag();
 
+                        TransportationItem selectedTransportItem = null;
+                        if (cargoHashMap.containsKey(selectedMarker)) {
+                            selectedTransportItem = cargoHashMap.get(selectedMarker);
+                        }
+                        if (truckHashMap.containsKey(selectedMarker)) {
+                            selectedTransportItem = truckHashMap.get(selectedMarker);
+                        }
 
-                LatLng origin = markerTransportItem.getOrigin().toLatLong();
-                LatLng dest = markerTransportItem.getDestination().toLatLong();
-                Services services = new Services();
-                String url = services.getDirectionsUrl(origin, dest);
-                DownloadTask downloadTask = new DownloadTask();
+                        LatLng origin = selectedTransportItem.getOrigin().toLatLong();
+                        LatLng dest = selectedTransportItem.getDestination().toLatLong();
+                        Services services = new Services();
+                        String url = services.getDirectionsUrl(origin, dest);
+                        DownloadTask downloadTask = new DownloadTask();
 
-                mapRefreshable = false;
+                        mapRefreshable = false;
+                        mMap.clear();
 
-                mMap.clear();
-                Marker startMarker = mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
-                Marker destMarker = mMap.addMarker(new MarkerOptions().position(dest).title("Dest"));
-                downloadTask.execute(url);
+                        Marker startMarker = mMap.addMarker(new MarkerOptions()
+                                .position(origin));
+                        Marker destMarker = mMap.addMarker(new MarkerOptions()
+                                .position(dest));
+                        downloadTask.execute(url);
 
-                ArrayList<Marker> markers = new ArrayList<>();
-                markers.add(startMarker);
-                markers.add(destMarker);
+                        ArrayList<Marker> markers = new ArrayList<>();
+                        markers.add(startMarker);
+                        markers.add(destMarker);
 
-                if (markerTransportItem.getClass() == CargoItem.class) {
-                    cargoDetailBar.setVisibility(View.VISIBLE);
-                    bindViewFromCargo((CargoItem) cargoHashMap.get(selectedMarker));
+                        if (selectedTransportItem.getClass() == CargoItem.class) {
+                            cargoDetailBar.setVisibility(View.VISIBLE);
+                            bindViewFromCargo((CargoItem) cargoHashMap.get(selectedMarker));
+                        }
+                        if (selectedTransportItem.getClass() == TruckItem.class) {
+                            truckDetailBar.setVisibility(View.VISIBLE);
+                            bindViewFromTruck((TruckItem) truckHashMap.get(selectedMarker));
+                        }
+                        cameraPosition = mMap.getCameraPosition();
+
+                        settingZoomAroundMarkerList(markers);
+                        mapOnClickState = MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL;
+
+                        break;
+                    default:
+                        break;
                 }
-                if (markerTransportItem.getClass() == TruckItem.class) {
-                    truckDetailBar.setVisibility(View.VISIBLE);
-                    bindViewFromTruck((TruckItem) truckHashMap.get(selectedMarker));
-                }
-                cameraPosition = mMap.getCameraPosition();
-
-                settingZoom(markers);
-                mapOnClickState = MAP_ONCLICK_ZOOM_OUT_FROM_DETAIL;
-
 
                 return true;
             }
@@ -589,7 +507,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cargoRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
                 String key = dataSnapshot.getKey();
                 CargoItem cargoItem = dataSnapshot.getValue(CargoItem.class);
@@ -603,12 +520,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Toast.makeText(MapsActivity.this, "onChildRemoved", Toast.LENGTH_SHORT).show();
 
                 String key = dataSnapshot.getKey();
                 if (cargoHashMap.containsKey(key)) {
@@ -623,12 +538,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(MapsActivity.this, "onChildMoved", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MapsActivity.this, "onCancelled", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -636,7 +549,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         truckRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(MapsActivity.this, "onChildAdded", Toast.LENGTH_SHORT).show();
 
                 String key = dataSnapshot.getKey();
                 TruckItem truckItem = dataSnapshot.getValue(TruckItem.class);
@@ -650,12 +562,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(MapsActivity.this, "onChildChanged", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Toast.makeText(MapsActivity.this, "onChildRemoved", Toast.LENGTH_SHORT).show();
 
                 String key = dataSnapshot.getKey();
                 if (truckHashMap.containsKey(key)) {
@@ -670,12 +580,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(MapsActivity.this, "onChildMoved", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MapsActivity.this, "onCancelled", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -693,6 +601,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return latLng;
     }
 
+    private void bindViewFromGeocoderData(LatLng location) {
+        Geocoder geocoder = new Geocoder(this);
+        Address address = null;
+        try {
+            address = geocoder.getFromLocation(location.latitude, location.longitude, 1).get(0);
+            cargoDetailDestEditText.setText(address.getAddressLine(0));
+            cargoDetailZipCodeEditText.setText(address.getAddressLine(1));
+            cargoDetailCountryEditText.setText(address.getCountryCode());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void getRoute(LatLng coordination) {
 
         mapRefreshable = false;
@@ -701,33 +624,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.clear();
 
-            currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
+            currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions()
+                    .position(coordination)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
             searchEditText.setText("");
-            VS.setCargoItemOrigin(currentRouteMarkerList.get(0).getPosition());
-            settingZoom(currentRouteMarkerList);
+            settingZoomAroundMarkerList(currentRouteMarkerList);
 
-            Geocoder geocoder = new Geocoder(this);
-            Address address = null;
-            try {
-                address = geocoder.getFromLocation(currentRouteMarkerList.get(0).getPosition().latitude, currentRouteMarkerList.get(0).getPosition().longitude, 1).get(0);
-                Toast.makeText(this, address.getPostalCode().toString(), Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             searchEditText.setHint("Enter destination");
 
 
         } else if (currentRouteMarkerList.size() == 1) {
 
+            currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions()
+                    .position(coordination)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
+
             if (currentSelect == cargoHashMap)
                 addCargoBar.setVisibility(View.VISIBLE);
+            bindViewFromGeocoderData(currentRouteMarkerList.get(1).getPosition());
             if (currentSelect == truckHashMap)
                 addTruckBar.setVisibility(View.VISIBLE);
-
-            currentRouteMarkerList.add(mMap.addMarker(new MarkerOptions().position(coordination)));
-            searchEditText.setText("");
-            VS.setCargoItemDestination(currentRouteMarkerList.get(1).getPosition());
-
 
             LatLng origin = currentRouteMarkerList.get(0).getPosition();
             LatLng dest = currentRouteMarkerList.get(1).getPosition();
@@ -736,10 +652,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             DownloadTask downloadTask = new DownloadTask();
             downloadTask.execute(url);
 
-            settingZoom(currentRouteMarkerList);
+            settingZoomAroundMarkerList(currentRouteMarkerList);
 
             currentRouteMarkerList.clear();
-            searchEditText.setHint("Enter start location");
             searchEditTextWrapper.setVisibility(View.GONE);
             mapOnClickState = MAP_ONCLICK_NULL;
 
@@ -750,7 +665,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void settingZoom(List<Marker> markerList) {
+    private void settingZoomAroundMarkerList(List<Marker> markerList) {
         if (markerList.size() >= 2) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (Marker marker : markerList) {
@@ -785,29 +700,99 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         for (Map.Entry<String, TransportationItem> entry : transportationItemHashMap.entrySet()) {
-            Marker marker = mMap.addMarker(new MarkerOptions().position(entry.getValue().getOrigin().toLatLong()));
-            marker.setTitle(entry.getValue().getName());
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(entry.getValue().getOrigin().toLatLong())
+//                    .icon(BitmapDescriptorFactory.defaultMarker(getResources().getColor(R.color.colorAccent)))
+            );
             marker.setTag(entry.getKey());
-//            marker.setTag(new Pair(entry.getKey(),entry.getValue()));
         }
 
     }
 
-    public void showSearchEventItems() {
+    private void backToMainMapView() {
+
+        searchEditTextWrapper.setVisibility(View.GONE);
+        searchEditText.setText("");
+        searchEditText.setHint("Enter start location");
+        showFloatingButtons();
+        cargoDetailBar.setVisibility(View.GONE);
+        cleanCargoDetailBar();
+        truckDetailBar.setVisibility(View.GONE);
+        cleanTruckDetailBar();
+        addTruckBar.setVisibility(View.GONE);
+        cleanAddTruckBar();
+        addCargoBar.setVisibility(View.GONE);
+        cleanAddCargoBar();
+
+        mapRefreshable=true;
+
+        mapOnClickState=MAP_ONCLICK_NULL;
+        markerOnClickState=MARKER_ONCLICK_ZOOM_FORM_DETAIL;
+
+        mMap.clear();
+        drawTransportationMarkers(currentSelect);
+
+        currentRouteMarkerList.clear();
+
+    }
+
+    private void hideFloatingButtons() {
         floatingActionButtonOpenSearch.setVisibility(View.GONE);
         floatingLoginOptionsButton.setVisibility(View.GONE);
         floatingActionButtonSwitch.setVisibility(View.GONE);
-        searchEditTextWrapper.setVisibility(View.VISIBLE);
     }
 
-    public void hideSearchEventItems() {
+    private void showFloatingButtons() {
         floatingActionButtonOpenSearch.setVisibility(View.VISIBLE);
         floatingLoginOptionsButton.setVisibility(View.VISIBLE);
         floatingActionButtonSwitch.setVisibility(View.VISIBLE);
-        searchEditTextWrapper.setVisibility(View.GONE);
+    }
+
+    private void cleanCargoDetailBar() {
+        cargoDetailDeliveryAddressTextView.setVisibility(View.VISIBLE);
+        cargoDetailDeliveryAddressTextView.setText("");
+        cargoDetailLenghtTextView.setVisibility(View.VISIBLE);
+        cargoDetailLenghtTextView.setText("");
+        cargoDetailHeightTextView.setVisibility(View.VISIBLE);
+        cargoDetailHeightTextView.setText("");
+        cargoDetailWidthTextView.setVisibility(View.VISIBLE);
+        cargoDetailWidthTextView.setText("");
+        cargoDetailWeightTextView.setVisibility(View.VISIBLE);
+        cargoDetailWeightTextView.setText("");
+        cargoDetailNoteTextView.setVisibility(View.VISIBLE);
+        cargoDetailNoteTextView.setText("");
+        cargoDetailPhoneNumberTextView.setVisibility(View.VISIBLE);
+        cargoDetailPhoneNumberTextView.setText("");
+        cargoDetailBudgetTextView.setVisibility(View.VISIBLE);
+        cargoDetailBudgetTextView.setText("");
+    }
+
+    private void cleanTruckDetailBar() {
+        truckDetailDateTextView.setText("");
+        truckDetailDateTextViewWrapper.setVisibility(View.VISIBLE);
+        truckDetailTelTextView.setText("");
+        truckDetailTelTextViewWrapper.setVisibility(View.VISIBLE);
+        truckDetailTypeTextView.setText("");
+        truckDetailTypeTextViewWrapper.setVisibility(View.VISIBLE);
+    }
+
+    private void cleanAddTruckBar() {
+        truckDetailDateEditText.setText("");
+        truckDetailTelEditText.setText("");
+        truckDetailTypeEditText.setText("");
+    }
+
+    private void cleanAddCargoBar() {
+        cargoDetailCountryEditText.setText("");
+        cargoDetailDestEditText.setText("");
+        cargoDetailEstimateEditText.setText("");
+        cargoDetailHeightEditText.setText("");
+        cargoDetailLengthEditText.setText("");
+        cargoDetailPhoneNumberEditText.setText("");
+        cargoDetailWeightEditText.setText("");
+        cargoDetailWidthEditText.setText("");
+        cargoDetailZipCodeEditText.setText("");
+        additionalDetailsEditText.setText("");
+
     }
 }
-
-
-
-

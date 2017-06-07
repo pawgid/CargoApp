@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btnReset;
 
     @BindView(R.id.progressBarLogin)
-    ProgressBar progressBarLogin;
+    LinearLayout progressBarLogin;
 
     @OnClick(R.id.btn_signup)
     public void btn_signupClick() {
@@ -96,8 +97,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        auth = FirebaseAuth.getInstance();
 
+        auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(LoginActivity.this, MapsActivity.class));
             finish();
@@ -105,6 +106,5 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        auth = FirebaseAuth.getInstance();
     }
 }
