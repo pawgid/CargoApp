@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cargocrew.cargoapp.R;
 import com.cargocrew.cargoapp.forDrawingRoute.DownloadTask;
@@ -27,7 +26,6 @@ import com.cargocrew.cargoapp.models.CargoItem;
 import com.cargocrew.cargoapp.models.Point;
 import com.cargocrew.cargoapp.models.TransportationItem;
 import com.cargocrew.cargoapp.models.TruckItem;
-import com.cargocrew.cargoapp.models.ValuesSingleton;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -90,8 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String selectedMarker = null;
     private CameraPosition cameraPosition = null;
     public boolean mapRefreshable = true;
-//    private ValuesSingleton VS = ValuesSingleton.getInstance();
-    private FirebaseAuth auth;
 
     @BindView(R.id.searchEditTextWrapper)
     LinearLayout searchEditTextWrapper;
@@ -198,10 +194,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         truckItem.setOrigin(new Point(currentRouteMarkerList.get(0).getPosition()));
         truckItem.setDestination(new Point(currentRouteMarkerList.get(1).getPosition()));
         truckItem = bindTruckFromForm(truckItem);
+        setUserIDOnItem(truckItem);
         String key = cargoRef.push().getKey();
         truckRef.child(key).setValue(truckItem);
 
         backToMainMapView();
+    }
+
+    private void setUserIDOnItem(TransportationItem truckItem) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String userID = auth.getCurrentUser().getUid();
+        truckItem.setOwner(userID);
     }
 
     @OnClick(R.id.truckDetailCancelButton)
@@ -244,8 +247,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             truckDetailTypeTextViewWrapper.setVisibility(View.GONE);
         }
-    }
 
+        showDeleteForOwner(truck,truckDetailDeleteTruck);
+    }
 
     @OnClick(R.id.cargoDetailOrder)
     public void cargoDetailOrderClick() {
@@ -253,6 +257,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cargoItem.setOrigin(new Point(currentRouteMarkerList.get(0).getPosition()));
         cargoItem.setDestination(new Point(currentRouteMarkerList.get(1).getPosition()));
         cargoItem = bindCargoFromForm(cargoItem);
+        setUserIDOnItem(cargoItem);
         String key = truckRef.push().getKey();
         cargoRef.child(key).setValue(cargoItem);
 
@@ -272,14 +277,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         backToMainMapView();
     }
 
-
     public CargoItem bindCargoFromForm(CargoItem cargo) {
 
         cargo.setDestCountryCode(cargoDetailCountryEditText.getText().toString());
         cargo.setDestStreet(cargoDetailDestEditText.getText().toString());
         cargo.setDestZipCodeAndCity(cargoDetailZipCodeEditText.getText().toString());
         cargo.setPhoneNumber(cargoDetailPhoneNumberEditText.getText().toString());
-        cargo.setAddidtionalInfo(additionalDetailsEditText.getText().toString());
+        cargo.setAddidtionInfo(additionalDetailsEditText.getText().toString());
 
         cargo.setOffer(zeroIfEditTextIsEmpty(cargoDetailEstimateEditText));
         cargo.setHeight(zeroIfEditTextIsEmpty(cargoDetailHeightEditText));
@@ -299,16 +303,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void bindViewFromCargo(CargoItem cargo) {
 
-
         cargoDetailDeliveryAddressTextView.setText(cargo.getDestStreet() + "\n" + cargo.getDestZipCodeAndCity() + "; " + cargo.getDestCountryCode());
         cargoDetailDeliveryAddressTextView.setText(cargo.getDestStreet() + "\n" + cargo.getDestZipCodeAndCity() + "; " + cargo.getDestCountryCode());
         cargoDetailLenghtTextView.setText("L: " + String.valueOf(cargo.getLength()) + " cm");
         cargoDetailHeightTextView.setText("H: " + String.valueOf(cargo.getHeight()) + " cm");
-        cargoDetailWidthTextView.setText("L: " + String.valueOf(cargo.getWidth()) + " cm");
+        cargoDetailWidthTextView.setText("W: " + String.valueOf(cargo.getWidth()) + " cm");
         cargoDetailWeightTextView.setText("Weight: " + String.valueOf(cargo.getWeight()) + " kg");
-        cargoDetailNoteTextView.setText(cargo.getAddidtionalInfo());
+        cargoDetailNoteTextView.setText(cargo.getAddidtionInfo());
         cargoDetailPhoneNumberTextView.setText("Contact number: " + cargo.getPhoneNumber());
         cargoDetailBudgetTextView.setText("Offer: " + String.valueOf(cargo.getOffer()));
+
+        showDeleteForOwner(cargo, cargoDetailDeleteCargo);
+    }
+
+    private void showDeleteForOwner(TransportationItem item, Button deleteButton) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String userID = auth.getCurrentUser().getUid();
+        if(item.getOwner().equals(userID))
+            deleteButton.setVisibility(View.VISIBLE);
     }
 
 
@@ -358,14 +370,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
-
-//        auth = FirebaseAuth.getInstance();
-//        String uid = auth.getCurrentUser().getUid();
-
         currentSelect = cargoHashMap;
-
         haveLocationPermission();
-
         setUpMap();
         dataBaseSetup();
     }
@@ -606,8 +612,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Address address = null;
         try {
             address = geocoder.getFromLocation(location.latitude, location.longitude, 1).get(0);
-            cargoDetailDestEditText.setText(address.getAddressLine(0));
-            cargoDetailZipCodeEditText.setText(address.getAddressLine(1));
+            cargoDetailDestEditText.setText(address.getSubAdminArea());
+            cargoDetailZipCodeEditText.setText(address.getPostalCode() +" "+ address.getLocality());
             cargoDetailCountryEditText.setText(address.getCountryCode());
 
 
@@ -641,7 +647,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (currentSelect == cargoHashMap)
                 addCargoBar.setVisibility(View.VISIBLE);
-            bindViewFromGeocoderData(currentRouteMarkerList.get(1).getPosition());
+                bindViewFromGeocoderData(currentRouteMarkerList.get(1).getPosition());
             if (currentSelect == truckHashMap)
                 addTruckBar.setVisibility(View.VISIBLE);
 
@@ -654,7 +660,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             settingZoomAroundMarkerList(currentRouteMarkerList);
 
-            currentRouteMarkerList.clear();
+
             searchEditTextWrapper.setVisibility(View.GONE);
             mapOnClickState = MAP_ONCLICK_NULL;
 
@@ -723,6 +729,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cleanAddTruckBar();
         addCargoBar.setVisibility(View.GONE);
         cleanAddCargoBar();
+
+        cargoDetailDeleteCargo.setVisibility(View.GONE);
+        truckDetailDeleteTruck.setVisibility(View.GONE);
 
         mapRefreshable=true;
 

@@ -147,6 +147,7 @@
                     android:id="@+id/truckDetaildeleteTruck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:text="del" />
 
             </LinearLayout>
@@ -532,6 +533,7 @@
 
             <Button
                 android:id="@+id/cargoDetailDeleteCargo"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
